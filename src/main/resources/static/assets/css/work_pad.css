@@ -1,0 +1,291 @@
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+    display: block;
+}
+body {
+    background-color: #EBEBEB;
+    /* width: 100%; */
+    background-size: cover;
+}
+ol, ul {
+    list-style: none;
+}
+blockquote, q {
+    quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content: '';
+    content: none;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+body {
+    font-family: Microsoft JhengHei;
+}
+
+::placeholder {
+    color: #d6d6d6;
+}
+
+.top-bar-container {
+    background-color: #1C1F4C;
+    width: 100%;
+    height: 75px;
+    color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+}
+
+.top-bar-container .top-bar-identity {
+    padding-left: 10px;
+    font-size: 26px;
+    line-height: 75px;
+    width: 100px;
+    white-space: nowrap;
+} 
+
+.top-bar-container .top-bar-status {
+    font-size: 40px;
+    line-height: 75px;
+    font-weight: bold;
+}
+
+.top-bar-container .logout-form {
+    width: 100px;
+    padding-right: 10px;
+    height: 75px;
+}
+
+.logout-form .top-bar-function {
+    height: 75px;
+    display: flex;
+    align-items: center;
+    float: right;
+}
+
+.logout-form button {
+    font-family: Microsoft JhengHei;
+    font-size: 26px;
+    border-radius: 30px;
+    border: none;
+    font-weight: bold;
+    outline: none;
+    /* height: 43px;
+    width: 100px; */
+    background-color: #EBEBEB;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.task-info-container {
+    padding-top: 80px;
+}
+
+.task-info-material {
+    display: flex;
+    padding-top: 24px;
+    justify-content: center;
+}    
+
+.task-info-material:last-of-type {
+    padding-bottom: 100px;
+}
+
+.task-info-material input {
+    border: 2px solid #f6f6f6;
+    border-radius: 6px;
+    width: 335px;
+    padding: 10px 6px;
+    font-family: Microsoft JhengHei;
+    font-size: 32px;
+    /* margin: 0 auto;    */
+    outline:none;
+    /* transition: width 0.4s ease-in-out; */
+    
+}
+
+.task-info-material span {
+    font-size: 32px;
+    line-height: 66px;
+    /* line-height: 50px; */
+    font-weight: bold;
+}
+
+.task-info-material input::-moz-placeholder{
+    font-size: 26px;
+}
+
+.task-info-material input:-moz-placeholder{
+    font-size: 26px;
+}
+
+.task-info-material input::-webkit-input-placeholder{
+    font-size: 26px;
+}
+
+.task-info-material input:focus {
+    /* border: 2px solid #555555; */
+    /* border-radius: 6px; */
+    /* width: 300px; */
+    background-color: rgb(255, 242, 242);
+    
+}
+
+.task-info-material input:disabled {
+    background-color: rgba(141, 148, 154, 0.6);
+}
+
+.bottom-button-container{
+    display: flex;
+    justify-content:center;
+}
+
+.bottom-button-container button {
+    font-family: Microsoft JhengHei;
+    font-size: 24px;
+    width: 190px;
+    height: 130px;
+    border-radius: 20px;
+    border: none;
+    background-color: #1C1F4C;
+    color: #ffffff;
+    margin: 0 15px;
+    outline:none;
+}
+
+.bottom-button-container button:hover {
+    background-color: rgba(28, 31, 76, 0.8);
+}
+
+.bottom-button-container button:active {
+    background-color: rgba(28, 31, 76, 0.6);
+}
+
+.bottom-button-container button:disabled {
+    background-color: #8D949A;
+    /* outline:none; */
+}
+
+.op-btn i {
+    font-size: 40px;
+}
+
+.op-btn span{
+    font-size: 40px;
+    margin-left: 4px;
+}
+
+.smb-confirm-button-class {
+    font-family: Microsoft JhengHei;
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffff;
+    border-radius: 6px;
+    border: none;
+    outline: none;
+    width: 90px;
+    height: 50px;
+    line-height: 50px;
+    background-color: #3085D6;
+    margin: auto 3px;
+}
+
+.smb-confirm-button-class:hover {
+    background-color: #2B77C0;
+}
+
+.smb-confirm-button-class:active {
+    background-color: #266AAB;
+}
+
+.smb-cancel-button-class {
+    font-family: Microsoft JhengHei;
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffff;
+    border-radius: 6px;
+    border: none;
+    outline: none;
+    width: 90px;
+    height: 50px;
+    line-height: 50px;
+    background-color: #AAAAAA;
+    margin: auto 3px;
+}
+
+.smb-cancel-button-class:hover {
+    background-color: #999999;
+}
+
+.smb-cancel-button-class:active {
+    background-color: #888888;
+}
+
+.swal2-title, .swal2-content {
+    font-family: Verdana !important;
+}
+
+.login-form {
+    display: block;
+    margin: 0 auto;
+}
+
+.login-form button {
+    font-family: Microsoft JhengHei;
+    font-size: 40px;
+    /* width: 250px;
+    height: 82px; */
+    /* width: 260px; */
+    height: 100px;
+    background-color: #1C1F4C;
+    color: #ffffff;
+    border: none;
+    border-radius: 20px;
+    outline:none;        
+    margin-top: 60px;
+}
+
+.login-form button:hover {
+    background-color: rgba(28, 31, 76, 0.8);
+}
+
+.login-form button:active {
+    background-color: rgba(28, 31, 76, 0.6);
+}
+
+.top-bar-container-err {
+    background-color: #1C1F4C;
+    width: 100%;
+    height: 75px;
+    color: #ffffff;
+}
+
+.top-bar-container-err .top-bar-title-err {
+    font-size: 40px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 75px;
+}
