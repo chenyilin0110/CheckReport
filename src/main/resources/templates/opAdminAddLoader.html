@@ -413,7 +413,7 @@
                     if(status.indexOf('Success')>= 0){
                         Swal.fire({
                             title: "執行成功",
-                        html: "<p>已寫入完畢</p>",
+                        html: "<p>" + response.retMessage + "</p>",
                         confirmButtonText: '確定'
                         });
                     }else{
