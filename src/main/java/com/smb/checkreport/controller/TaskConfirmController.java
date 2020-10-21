@@ -41,10 +41,21 @@ public class TaskConfirmController {
 
         logger.info(">>> [" + request.getSession().getId() + "] Success get the id and type entered by the manager, order:" + order + " nest_program_no: " + nest_program_no + " machine_code: " + machine_code + " type: " + type);
         int failedCount = 0;
+
         ApiReturn ar = new ApiReturn();
         try {
+            // delete outputForExcel.txt file
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date today = new Date();
+            deleteFile(sdf.format(today).toString());
+
+            // split the nest program number
             String[] nest_program_no_split = nest_program_no.split(",");
             for(int each_nest_program_no_split = 0; each_nest_program_no_split < nest_program_no_split.length; each_nest_program_no_split++) {
+                // add \n to split the each nest program number in outputForExcel.txt file
+                if(each_nest_program_no_split > 0){
+                    outputForExcelReport();
+                }
                 List<ApiLog> get_elementCode = checkReportService.getElementCodeByNestProgramNO(nest_program_no_split[each_nest_program_no_split], machine_code, type, request.getSession().getId());
                 if (get_elementCode.get(0) == null) {
                     failedCount++;
@@ -104,7 +115,6 @@ public class TaskConfirmController {
 //                                                String expect_online_calendar_before = getCalendar(getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getExpectOnlineDate());
 
                                                 // format the online and offline and finish date
-                                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                                                 // before online date five day and after online date five day
                                                 Date expect_online_date = sdf.parse(getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getExpectOnlineDate());
                                                 Calendar online_calendar_before = new GregorianCalendar();
@@ -153,7 +163,7 @@ public class TaskConfirmController {
                             break;
                         }
                     }
-                    ar.setRetMessage("Sucess check the report and write the file: " + (nest_program_no_split.length - failedCount) + ", cannot get the report: " + failedCount);
+                    ar.setRetMessage("Successfully check the report and write the file: " + (nest_program_no_split.length - failedCount) + ", and cannot get the report: " + failedCount);
                     ar.setRetStatus("Success");
                 }
             }
@@ -191,6 +201,7 @@ public class TaskConfirmController {
         writer.write("BUG!!!");
         writer.flush();
         writer.close();
+        outputForExcelReport("BUG here!!!");
     }
 
     public void writeFile(String element_code, String dispatch_detail_sns, String order, String nest_program_no) throws IOException {
@@ -211,6 +222,8 @@ public class TaskConfirmController {
         writer.write("element_code: " + element_code + ", dispatch_detail_sns: " + dispatch_detail_sns + " is not accurate reported, this report mapping to the order: " + mappingToOtherOrder + "\n");
         writer.flush();
         writer.close();
+        // output element code and mapping order num
+        outputForExcelReport(element_code, mappingToOtherOrder);
     }
 
     public void writeFile(String element_code, String order, String nest_program_no, int status) throws IOException {
@@ -233,11 +246,72 @@ public class TaskConfirmController {
         }
         writer.flush();
         writer.close();
+        outputForExcelReport(element_code, status);
     }
 
     public void deleteFile(String deleteFileName) throws IOException {
         Path file_name = Paths.get(System.getProperty("user.dir"),"\\log\\" + deleteFileName + ".txt");
         File file = new File(file_name.toString());
         file.delete();
+    }
+
+    public void outputForExcelReport() throws IOException{
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date today = new Date();
+        Path file_name = Paths.get(System.getProperty("user.dir"),"\\log\\" + sdf.format(today).toString() + ".txt");
+        File file = new File(file_name.toString());
+        file.createNewFile();
+        FileWriter writer = new FileWriter(file, true);// true is mean don't overwirte previous content
+        writer.write("\n");
+        writer.flush();
+        writer.close();
+    }
+
+    public void outputForExcelReport(String element_code) throws IOException{
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date today = new Date();
+        Path file_name = Paths.get(System.getProperty("user.dir"),"\\log\\" + sdf.format(today).toString() + ".txt");
+        File file = new File(file_name.toString());
+        file.createNewFile();
+        FileWriter writer = new FileWriter(file, true);// true is mean don't overwirte previous content
+        writer.write(element_code + "、");
+        writer.flush();
+        writer.close();
+    }
+
+    public void outputForExcelReport(String element_code, int status) throws IOException{
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date today = new Date();
+        Path file_name = Paths.get(System.getProperty("user.dir"),"\\log\\" + sdf.format(today).toString() + ".txt");
+        File file = new File(file_name.toString());
+        file.createNewFile();
+        FileWriter writer = new FileWriter(file, true);// true is mean don't overwirte previous content
+        if(status == 0){
+            writer.write(element_code + ":沒有派工單、");
+        }else if(status == 2){
+            writer.write(element_code + ":該訂單已結案、");
+        }else if(status == 10){
+            writer.write(element_code + ":沒有派工單、");
+        }else if(status == 11){
+            writer.write(element_code + ":該訂單數量已足夠、");
+        }else if(status == 12){
+            writer.write(element_code + ":未填寫上下限時間、");
+        }else if(status == 13){
+            writer.write(element_code + ":逾期、");
+        }
+        writer.flush();
+        writer.close();
+    }
+
+    public void outputForExcelReport(String element_code, String otherOrder) throws IOException{
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date today = new Date();
+        Path file_name = Paths.get(System.getProperty("user.dir"),"\\log\\" + sdf.format(today).toString() + ".txt");
+        File file = new File(file_name.toString());
+        file.createNewFile();
+        FileWriter writer = new FileWriter(file, true);// true is mean don't overwirte previous content
+        writer.write(element_code + "報工到訂單:" + otherOrder + "、");
+        writer.flush();
+        writer.close();
     }
 }
