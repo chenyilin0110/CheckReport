@@ -48,7 +48,7 @@ public class TaskConfirmController {
             deleteFile(sdf.format(today).toString());
 
             // split the nest program number
-            String[] nest_program_no_split = nest_program_no.split(",");
+            String[] nest_program_no_split = nest_program_no.split(" ");
             for(int each_nest_program_no_split = 0; each_nest_program_no_split < nest_program_no_split.length; each_nest_program_no_split++) {
                 // add \n to split the each nest program number in outputForExcel.txt file
                 if(each_nest_program_no_split > 0){
