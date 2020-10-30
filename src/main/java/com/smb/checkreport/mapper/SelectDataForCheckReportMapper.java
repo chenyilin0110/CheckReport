@@ -17,7 +17,7 @@ public interface SelectDataForCheckReportMapper {
 
     @Select("<script>"
             + "select sn, machine_code, element_code, finish_number, finish_datetime, cdate, dispatch_detail_sns from smb.element_log where finish_datetime >= #{strDate}"
-            + "and machine_code = #{machine_code}"
+            + "<if test='machineId != null'> and assign_machine = #{machineId} </if>"
             + "and step_code = #{type}"
             + "and element_code = #{element_code}"
             + "and finish_number > '0'"
