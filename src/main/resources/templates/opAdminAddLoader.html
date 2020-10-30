@@ -418,8 +418,8 @@
                         });
                     }else{
                         Swal.fire({
-                        title: "執行失敗",
-                        html: "<p>無報工紀錄</p>",
+                        title: "Failed",
+                        html: "<p>" + response.retMessage + "</p>",
                         confirmButtonText: '確定'
                         });
                     }
