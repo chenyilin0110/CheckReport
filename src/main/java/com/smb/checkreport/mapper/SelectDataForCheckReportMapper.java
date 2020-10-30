@@ -41,7 +41,7 @@ public interface SelectDataForCheckReportMapper {
     List<OrderInfo> getOrderNumByOrderSN(@Param("sn") String sn);
 
     @Select("<script>"
-            + "select order_status from smb.order_info where order_num = #{order_num}"
+            + "select * from smb.order_info where order_num = #{order_num}"
             + "</script>")
     List<OrderInfo> getOrderStatusByOrderNum(@Param("order_num") String order_num);
 
