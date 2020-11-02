@@ -204,7 +204,7 @@ public class TaskConfirmController {
             deleteFile(sdf.format(today).toString());
 
             // split the nest program number
-            String[] nest_program_no_split = nest_program_no.split(",");
+            String[] nest_program_no_split = nest_program_no.split(" ");
             for(int each_nest_program_no_split = 0; each_nest_program_no_split < nest_program_no_split.length; each_nest_program_no_split++) {
                 // add \n to split the each nest program number in outputForExcel.txt file
                 if(each_nest_program_no_split > 0){
@@ -733,7 +733,7 @@ public class TaskConfirmController {
         file.createNewFile();
         FileWriter writer = new FileWriter(file, true);// true is mean don't overwirte previous content
         if(status == -1){
-            writer.write("order: " + element_code + " 重工，找不到訂單!!");
+            writer.write("訂單: " + element_code + " 重工，找不到訂單!!");
         }else if(status == 0){
             writer.write(element_code + ":沒有派工單、");
         }else if(status == 2){
