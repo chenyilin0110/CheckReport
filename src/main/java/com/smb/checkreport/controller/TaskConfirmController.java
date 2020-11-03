@@ -622,6 +622,7 @@ public class TaskConfirmController {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         return format.format(expect_date.getTime());
     }
+
     public void writeFile(String order, String nest_program_no) throws IOException{
         Path file_name = Paths.get(System.getProperty("user.dir"),"\\output\\" + order + "_" + nest_program_no + ".txt");
         File file = new File(file_name.toString());
@@ -631,38 +632,6 @@ public class TaskConfirmController {
         writer.flush();
         writer.close();
         outputForExcelReport("BUG here!!!");
-    }
-
-    public void writeFile(String element_code, String dispatch_detail_sns, String order, String nest_program_no) throws IOException {
-        Path file_name;
-        if(nest_program_no == null){
-            file_name = Paths.get(System.getProperty("user.dir"),"\\output\\" + order + "_" + element_code + ".txt");
-        }else{
-            file_name = Paths.get(System.getProperty("user.dir"),"\\output\\" + order + "_" + nest_program_no + ".txt");
-        }
-        File file = new File(file_name.toString());
-        file.createNewFile();
-        FileWriter writer = new FileWriter(file, true);// true is mean don't overwirte previous content
-        writer.write("element_code: " + element_code + ", dispatch_detail_sns: " + dispatch_detail_sns + " is accurate reported\n");
-        writer.flush();
-        writer.close();
-    }
-
-    public void writeFile(String element_code, String dispatch_detail_sns, String mappingToOtherOrder, String order, String nest_program_no) throws IOException {
-        Path file_name;
-        if(nest_program_no == null){
-            file_name = Paths.get(System.getProperty("user.dir"),"\\output\\" + order + "_" + element_code + ".txt");
-        }else{
-            file_name = Paths.get(System.getProperty("user.dir"),"\\output\\" + order + "_" + nest_program_no + ".txt");
-        }
-        File file = new File(file_name.toString());
-        file.createNewFile();
-        FileWriter writer = new FileWriter(file, true);// true is mean don't overwirte previous content
-        writer.write("element_code: " + element_code + ", dispatch_detail_sns: " + dispatch_detail_sns + " is not accurate reported, this report mapping to the order: " + mappingToOtherOrder + "\n");
-        writer.flush();
-        writer.close();
-        // output element code and mapping order num
-        outputForExcelReport(element_code, mappingToOtherOrder);
     }
 
     public void writeFile(String element_code, String order, String nest_program_no, int status) throws IOException {
@@ -698,6 +667,38 @@ public class TaskConfirmController {
         writer.flush();
         writer.close();
         outputForExcelReport(element_code, status);
+    }
+
+    public void writeFile(String element_code, String dispatch_detail_sns, String order, String nest_program_no) throws IOException {
+        Path file_name;
+        if(nest_program_no == null){
+            file_name = Paths.get(System.getProperty("user.dir"),"\\output\\" + order + "_" + element_code + ".txt");
+        }else{
+            file_name = Paths.get(System.getProperty("user.dir"),"\\output\\" + order + "_" + nest_program_no + ".txt");
+        }
+        File file = new File(file_name.toString());
+        file.createNewFile();
+        FileWriter writer = new FileWriter(file, true);// true is mean don't overwirte previous content
+        writer.write("element_code: " + element_code + ", dispatch_detail_sns: " + dispatch_detail_sns + " is accurate reported\n");
+        writer.flush();
+        writer.close();
+    }
+
+    public void writeFile(String element_code, String dispatch_detail_sns, String mappingToOtherOrder, String order, String nest_program_no) throws IOException {
+        Path file_name;
+        if(nest_program_no == null){
+            file_name = Paths.get(System.getProperty("user.dir"),"\\output\\" + order + "_" + element_code + ".txt");
+        }else{
+            file_name = Paths.get(System.getProperty("user.dir"),"\\output\\" + order + "_" + nest_program_no + ".txt");
+        }
+        File file = new File(file_name.toString());
+        file.createNewFile();
+        FileWriter writer = new FileWriter(file, true);// true is mean don't overwirte previous content
+        writer.write("element_code: " + element_code + ", dispatch_detail_sns: " + dispatch_detail_sns + " is not accurate reported, this report mapping to the order: " + mappingToOtherOrder + "\n");
+        writer.flush();
+        writer.close();
+        // output element code and mapping order num
+        outputForExcelReport(element_code, mappingToOtherOrder);
     }
 
     public void deleteFile(String deleteFileName) throws IOException {
