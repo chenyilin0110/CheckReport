@@ -101,7 +101,7 @@ public class TaskConfirmController {
                     // success get element code
                     List<ElementLog> get_dispatch_detail_sns = checkReportService.getDispatchDetailSNS(element_code[each_element_code_split], machine_code, type, request.getSession().getId());
                     if(get_dispatch_detail_sns.size()==0){
-                        // can not find the element code log
+                        // can not find the element code log, the finished number is zero
                         writeFile(element_code[each_element_code_split], order, null, -2);
                     }else {
                         for (int j = 0; j < get_dispatch_detail_sns.size(); j++) {
@@ -239,7 +239,7 @@ public class TaskConfirmController {
                             if (element_code[i] != null) { // success get element code in nest program number
                                 List<ElementLog> get_dispatch_detail_sns = checkReportService.getDispatchDetailSNS(element_code[i], machine_code, type, request.getSession().getId());
                                 if(get_dispatch_detail_sns.size()==0){
-                                    // can not find the element code log
+                                    // can not find the element code log, the finished number is zero
                                     writeFile(element_code[i], order, nest_program_no_split[each_nest_program_no_split], -2);
                                 }else {
                                     for (int j = 0; j < get_dispatch_detail_sns.size(); j++) {
@@ -390,7 +390,7 @@ public class TaskConfirmController {
                     // success get element code
                     List<ElementLog> get_dispatch_detail_sns = checkReportService.getDispatchDetailSNS(element_code[each_element_code_split], machine_code, type, request.getSession().getId());
                     if(get_dispatch_detail_sns.size()==0){
-                        // can not find the element code log
+                        // can not find the element code log, the finished number is zero
                         writeFile(element_code[each_element_code_split], order, null, -2);
                     }else {
                         for (int j = 0; j < get_dispatch_detail_sns.size(); j++) {
@@ -517,7 +517,7 @@ public class TaskConfirmController {
                     // success get element code
                     List<ElementLog> get_dispatch_detail_sns = checkReportService.getDispatchDetailSNS(element_code[each_element_code_split], machine_code, type, request.getSession().getId());
                     if(get_dispatch_detail_sns.size()==0){
-                        // can not find the element code log
+                        // can not find the element code log, the finished number is zero
                         writeFile(element_code[each_element_code_split], order, null, -2);
                     }else {
                         for (int j = 0; j < get_dispatch_detail_sns.size(); j++) {
@@ -648,7 +648,7 @@ public class TaskConfirmController {
             writer.write("訂單: " + order + " 重工，找不到訂單!!\n");
             element_code = order;
         }else if(status == -2) {
-            writer.write("element_code: " + element_code + " 此工件未報工!!\n");
+            writer.write("element_code: " + element_code + " 此工件製作失敗!!\n");
         }else if(status == 0){
             writer.write("element_code: " + element_code + " 重工，此訂單未派工!!\n");
         }else if(status == 2){
@@ -741,7 +741,7 @@ public class TaskConfirmController {
         if(status == -1){
             writer.write("訂單: " + element_code + " 重工，找不到訂單!!");
         }else if(status == -2){
-            writer.write(element_code + " 此工件未報工!!");
+            writer.write(element_code + " 此工件製作失敗、");
         }else if(status == 0){
             writer.write(element_code + ":沒有派工單、");
         }else if(status == 2){
