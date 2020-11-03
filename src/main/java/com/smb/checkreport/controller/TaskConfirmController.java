@@ -147,29 +147,19 @@ public class TaskConfirmController {
                                             writeFile(element_code[each_element_code_split], order, null, 12);
                                         } else {
                                             Date expect_online_date = sdf.parse(getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getExpectOnlineDate());
-                                            Calendar online_calendar_before = new GregorianCalendar();
-                                            Calendar online_calendar_after = new GregorianCalendar();
-                                            online_calendar_before.setTime(expect_online_date);
-                                            online_calendar_after.setTime(expect_online_date);
-                                            online_calendar_before.add(online_calendar_before.DATE, -5);
-                                            online_calendar_after.add(online_calendar_after.DATE, +5);
-                                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                                            String expect_online_calendar_before = format.format(online_calendar_before.getTime());
-                                            String expect_online_calendar_after = format.format(online_calendar_after.getTime());
+                                            int count = 0;
+                                            String expect_online_calendar_before = FormatDate(expect_online_date, count);
+                                            count++;
+                                            String expect_online_calendar_after = FormatDate(expect_online_date, count);
+                                            count++;
                                             // calendar to date
                                             Date expect_online_date_before = sdf.parse(expect_online_calendar_before);
                                             Date expect_online_date_after = sdf.parse(expect_online_calendar_after);
 
                                             // after offline date five day and before offline date five day
                                             Date expect_offline_date = sdf.parse(getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getExpectOfflineDate());
-                                            Calendar offline_calendar_before = new GregorianCalendar();
-                                            Calendar offline_calendar_after = new GregorianCalendar();
-                                            offline_calendar_before.setTime(expect_offline_date);
-                                            offline_calendar_after.setTime(expect_offline_date);
-                                            offline_calendar_before.add(offline_calendar_before.DATE, -5);
-                                            offline_calendar_after.add(offline_calendar_before.DATE, +5);
-                                            String expect_offline_calendar_before = format.format(offline_calendar_before.getTime());
-                                            String expect_offline_calendar_after = format.format(offline_calendar_after.getTime());
+                                            String expect_offline_calendar_before = FormatDate(expect_offline_date, count);
+                                            String expect_offline_calendar_after = FormatDate(expect_offline_date, count);
                                             // calendar to date
                                             Date expect_offline_date_before = sdf.parse(expect_offline_calendar_before);
                                             Date expect_offline_date_after = sdf.parse(expect_offline_calendar_after);
@@ -291,31 +281,23 @@ public class TaskConfirmController {
                                                         writeFile(element_code[i], order, nest_program_no_split[each_nest_program_no_split], 12);
                                                     } else {
                                                         // format the online and offline and finish date
+
                                                         // before online date five day and after online date five day
                                                         Date expect_online_date = sdf.parse(getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getExpectOnlineDate());
-                                                        Calendar online_calendar_before = new GregorianCalendar();
-                                                        Calendar online_calendar_after = new GregorianCalendar();
-                                                        online_calendar_before.setTime(expect_online_date);
-                                                        online_calendar_after.setTime(expect_online_date);
-                                                        online_calendar_before.add(online_calendar_before.DATE, -5);
-                                                        online_calendar_after.add(online_calendar_after.DATE, +5);
-                                                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                                                        String expect_online_calendar_before = format.format(online_calendar_before.getTime());
-                                                        String expect_online_calendar_after = format.format(online_calendar_after.getTime());
+                                                        int count = 0;
+                                                        String expect_online_calendar_before = FormatDate(expect_online_date, count);
+                                                        count++;
+                                                        String expect_online_calendar_after = FormatDate(expect_online_date, count);
+                                                        count++;
                                                         // calendar to date
                                                         Date expect_online_date_before = sdf.parse(expect_online_calendar_before);
                                                         Date expect_online_date_after = sdf.parse(expect_online_calendar_after);
 
                                                         // after offline date five day and before offline date five day
                                                         Date expect_offline_date = sdf.parse(getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getExpectOfflineDate());
-                                                        Calendar offline_calendar_before = new GregorianCalendar();
-                                                        Calendar offline_calendar_after = new GregorianCalendar();
-                                                        offline_calendar_before.setTime(expect_offline_date);
-                                                        offline_calendar_after.setTime(expect_offline_date);
-                                                        offline_calendar_before.add(offline_calendar_before.DATE, -5);
-                                                        offline_calendar_after.add(offline_calendar_before.DATE, +5);
-                                                        String expect_offline_calendar_before = format.format(offline_calendar_before.getTime());
-                                                        String expect_offline_calendar_after = format.format(offline_calendar_after.getTime());
+                                                        String expect_offline_calendar_before = FormatDate(expect_offline_date, count);
+                                                        count++;
+                                                        String expect_offline_calendar_after = FormatDate(expect_offline_date, count);
                                                         // calendar to date
                                                         Date expect_offline_date_before = sdf.parse(expect_offline_calendar_before);
                                                         Date expect_offline_date_after = sdf.parse(expect_offline_calendar_after);
@@ -454,29 +436,19 @@ public class TaskConfirmController {
                                             writeFile(element_code[each_element_code_split], order, null, 12);
                                         } else {
                                             Date expect_online_date = sdf.parse(getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getExpectOnlineDate());
-                                            Calendar online_calendar_before = new GregorianCalendar();
-                                            Calendar online_calendar_after = new GregorianCalendar();
-                                            online_calendar_before.setTime(expect_online_date);
-                                            online_calendar_after.setTime(expect_online_date);
-                                            online_calendar_before.add(online_calendar_before.DATE, -5);
-                                            online_calendar_after.add(online_calendar_after.DATE, +5);
-                                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                                            String expect_online_calendar_before = format.format(online_calendar_before.getTime());
-                                            String expect_online_calendar_after = format.format(online_calendar_after.getTime());
+                                            int count = 0;
+                                            String expect_online_calendar_before = FormatDate(expect_online_date, count);
+                                            count++;
+                                            String expect_online_calendar_after = FormatDate(expect_online_date, count);
+                                            count++;
                                             // calendar to date
                                             Date expect_online_date_before = sdf.parse(expect_online_calendar_before);
                                             Date expect_online_date_after = sdf.parse(expect_online_calendar_after);
 
                                             // after offline date five day and before offline date five day
                                             Date expect_offline_date = sdf.parse(getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getExpectOfflineDate());
-                                            Calendar offline_calendar_before = new GregorianCalendar();
-                                            Calendar offline_calendar_after = new GregorianCalendar();
-                                            offline_calendar_before.setTime(expect_offline_date);
-                                            offline_calendar_after.setTime(expect_offline_date);
-                                            offline_calendar_before.add(offline_calendar_before.DATE, -5);
-                                            offline_calendar_after.add(offline_calendar_before.DATE, +5);
-                                            String expect_offline_calendar_before = format.format(offline_calendar_before.getTime());
-                                            String expect_offline_calendar_after = format.format(offline_calendar_after.getTime());
+                                            String expect_offline_calendar_before = FormatDate(expect_offline_date, count);
+                                            String expect_offline_calendar_after = FormatDate(expect_offline_date, count);
                                             // calendar to date
                                             Date expect_offline_date_before = sdf.parse(expect_offline_calendar_before);
                                             Date expect_offline_date_after = sdf.parse(expect_offline_calendar_after);
@@ -591,29 +563,19 @@ public class TaskConfirmController {
                                             writeFile(element_code[each_element_code_split], order, null, 12);
                                         } else {
                                             Date expect_online_date = sdf.parse(getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getExpectOnlineDate());
-                                            Calendar online_calendar_before = new GregorianCalendar();
-                                            Calendar online_calendar_after = new GregorianCalendar();
-                                            online_calendar_before.setTime(expect_online_date);
-                                            online_calendar_after.setTime(expect_online_date);
-                                            online_calendar_before.add(online_calendar_before.DATE, -5);
-                                            online_calendar_after.add(online_calendar_after.DATE, +5);
-                                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                                            String expect_online_calendar_before = format.format(online_calendar_before.getTime());
-                                            String expect_online_calendar_after = format.format(online_calendar_after.getTime());
+                                            int count = 0;
+                                            String expect_online_calendar_before = FormatDate(expect_online_date, count);
+                                            count++;
+                                            String expect_online_calendar_after = FormatDate(expect_online_date, count);
+                                            count++;
                                             // calendar to date
                                             Date expect_online_date_before = sdf.parse(expect_online_calendar_before);
                                             Date expect_online_date_after = sdf.parse(expect_online_calendar_after);
 
                                             // after offline date five day and before offline date five day
                                             Date expect_offline_date = sdf.parse(getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getExpectOfflineDate());
-                                            Calendar offline_calendar_before = new GregorianCalendar();
-                                            Calendar offline_calendar_after = new GregorianCalendar();
-                                            offline_calendar_before.setTime(expect_offline_date);
-                                            offline_calendar_after.setTime(expect_offline_date);
-                                            offline_calendar_before.add(offline_calendar_before.DATE, -5);
-                                            offline_calendar_after.add(offline_calendar_before.DATE, +5);
-                                            String expect_offline_calendar_before = format.format(offline_calendar_before.getTime());
-                                            String expect_offline_calendar_after = format.format(offline_calendar_after.getTime());
+                                            String expect_offline_calendar_before = FormatDate(expect_offline_date, count);
+                                            String expect_offline_calendar_after = FormatDate(expect_offline_date, count);
                                             // calendar to date
                                             Date expect_offline_date_before = sdf.parse(expect_offline_calendar_before);
                                             Date expect_offline_date_after = sdf.parse(expect_offline_calendar_after);
@@ -648,6 +610,18 @@ public class TaskConfirmController {
         return new ResponseEntity<String>(JSON.toJSONString(ar), HttpStatus.OK);
     }
 
+    public String FormatDate(Date date, int count){
+        SimpleDateFormat temp = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar expect_date = new GregorianCalendar();
+        expect_date.setTime(date);
+        if(count % 2 == 0){
+            expect_date.add(expect_date.DATE, -5);
+        }else{
+            expect_date.add(expect_date.DATE, +5);
+        }
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        return format.format(expect_date.getTime());
+    }
     public void writeFile(String order, String nest_program_no) throws IOException{
         Path file_name = Paths.get(System.getProperty("user.dir"),"\\output\\" + order + "_" + nest_program_no + ".txt");
         File file = new File(file_name.toString());
