@@ -79,87 +79,91 @@ public class TaskConfirmController {
                         for (int i = 0; i < element_code.length; i++) {
                             if (element_code[i] != null) { // success get element code in nest program number
                                 List<ElementLog> get_dispatch_detail_sns = checkReportService.getDispatchDetailSNS(element_code[i], machine_code, type, request.getSession().getId());
-                                for (int j = 0; j < get_dispatch_detail_sns.size(); j++) {
-                                    // maybe dispatch_detail_sns have more than two number, so split the dispatch_detail_sns
-                                    String[] stringSplit = get_dispatch_detail_sns.get(j).getDispatchDetailSNS().split(",");
-                                    for (int k = 0; k < stringSplit.length; k++) {
-                                        if (!stringSplit[k].equals("")) {
-                                            List<GetOrderSNByDispatchDetailSNS> get_order_sn_by_dispath_detail_sns = checkReportService.getOrderSNByDispatchDetailSNS(stringSplit[k], request.getSession().getId());
-                                            List<GetOrderSNByDispatchDetailSNS> get_order_sn_by_order_num = checkReportService.getOrderSNByOrder(order, request.getSession().getId());
-                                            if (get_order_sn_by_dispath_detail_sns.get(0).getOrderSN().equals(get_order_sn_by_order_num.get(0).getOrderSN())) {
-                                                // the report accurated
-                                                writeFile(element_code[i], stringSplit[k], order, nest_program_no_split[each_nest_program_no_split]);
-                                            } else {
-                                                // the report have dispatch_details_sns but not accurated
-                                                List<OrderInfo> get_order_num_by_order_sn = checkReportService.getOrderNumByOrderSN(get_order_sn_by_dispath_detail_sns.get(0).getOrderSN(), request.getSession().getId());
-                                                writeFile(element_code[i], stringSplit[k], get_order_num_by_order_sn.get(0).getOrderNum(), order, nest_program_no_split[each_nest_program_no_split]);
-                                            }
-                                        } else {
-                                            // the report have not dispatch_details_sns that is mean repeat
-                                            if (get_order_status.get(0).getOrderStatus().equals("0")) {
-                                                // 0 is no dispatch
-                                                writeFile(element_code[i], order, nest_program_no_split[each_nest_program_no_split], 0);
-                                            } else if (get_order_status.get(0).getOrderStatus().equals("1")) {
-                                                // 1 is have dispatch
+                                if(get_dispatch_detail_sns.size()==0){
+                                    writeFile(element_code[i], order, nest_program_no_split[each_nest_program_no_split],-2);
+                                }else {
+                                    for (int j = 0; j < get_dispatch_detail_sns.size(); j++) {
+                                        // maybe dispatch_detail_sns have more than two number, so split the dispatch_detail_sns
+                                        String[] stringSplit = get_dispatch_detail_sns.get(j).getDispatchDetailSNS().split(",");
+                                        for (int k = 0; k < stringSplit.length; k++) {
+                                            if (!stringSplit[k].equals("")) {
+                                                List<GetOrderSNByDispatchDetailSNS> get_order_sn_by_dispath_detail_sns = checkReportService.getOrderSNByDispatchDetailSNS(stringSplit[k], request.getSession().getId());
                                                 List<GetOrderSNByDispatchDetailSNS> get_order_sn_by_order_num = checkReportService.getOrderSNByOrder(order, request.getSession().getId());
-                                                List<RelManufactureElement> getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN = checkReportService.getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN(
-                                                        element_code[i], type, get_order_sn_by_order_num.get(0).getOrderSN(), request.getSession().getId());
-
-                                                if (getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.size() == 0) {
-                                                    // 10 is mean have not data in rel_manufacture_element
-                                                    writeFile(element_code[i], order, nest_program_no_split[each_nest_program_no_split], 10);
-                                                } else if (getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getIsFinished().equals("1")) {
-                                                    // 11 is mean finish
-                                                    writeFile(element_code[i], order, nest_program_no_split[each_nest_program_no_split], 11);
-                                                    break;
-                                                } else if ((getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getExpectOnlineDate() == null) &&
-                                                        (getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getExpectOfflineDate() == null)) {
-                                                    // 12 is mean online and offline is null
-                                                    writeFile(element_code[i], order, nest_program_no_split[each_nest_program_no_split], 12);
+                                                if (get_order_sn_by_dispath_detail_sns.get(0).getOrderSN().equals(get_order_sn_by_order_num.get(0).getOrderSN())) {
+                                                    // the report accurated
+                                                    writeFile(element_code[i], stringSplit[k], order, nest_program_no_split[each_nest_program_no_split]);
                                                 } else {
-                                                    //                                                String expect_online_calendar_before = getCalendar(getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getExpectOnlineDate());
-
-                                                    // format the online and offline and finish date
-                                                    // before online date five day and after online date five day
-                                                    Date expect_online_date = sdf.parse(getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getExpectOnlineDate());
-                                                    Calendar online_calendar_before = new GregorianCalendar();
-                                                    Calendar online_calendar_after = new GregorianCalendar();
-                                                    online_calendar_before.setTime(expect_online_date);
-                                                    online_calendar_after.setTime(expect_online_date);
-                                                    online_calendar_before.add(online_calendar_before.DATE, -5);
-                                                    online_calendar_after.add(online_calendar_after.DATE, +5);
-                                                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                                                    String expect_online_calendar_before = format.format(online_calendar_before.getTime());
-                                                    String expect_online_calendar_after = format.format(online_calendar_after.getTime());
-                                                    // calendar to date
-                                                    Date expect_online_date_before = sdf.parse(expect_online_calendar_before);
-                                                    Date expect_online_date_after = sdf.parse(expect_online_calendar_after);
-
-                                                    // after offline date five day and before offline date five day
-                                                    Date expect_offline_date = sdf.parse(getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getExpectOfflineDate());
-                                                    Calendar offline_calendar_before = new GregorianCalendar();
-                                                    Calendar offline_calendar_after = new GregorianCalendar();
-                                                    offline_calendar_before.setTime(expect_offline_date);
-                                                    offline_calendar_after.setTime(expect_offline_date);
-                                                    offline_calendar_before.add(offline_calendar_before.DATE, -5);
-                                                    offline_calendar_after.add(offline_calendar_before.DATE, +5);
-                                                    String expect_offline_calendar_before = format.format(offline_calendar_before.getTime());
-                                                    String expect_offline_calendar_after = format.format(offline_calendar_after.getTime());
-                                                    // calendar to date
-                                                    Date expect_offline_date_before = sdf.parse(expect_offline_calendar_before);
-                                                    Date expect_offline_date_after = sdf.parse(expect_offline_calendar_after);
-
-                                                    Date finish_date = sdf.parse(get_dispatch_detail_sns.get(j).getFinishDatetime());
-
-                                                    if ((expect_online_date_before.before(finish_date)) || ((expect_online_date_after.after(finish_date)) && (expect_offline_date_before.before(finish_date))) || (expect_offline_date_after.after(finish_date))) {
-                                                        // 13 is mean the date is before the online date or after the offline date
-                                                        writeFile(element_code[i], order, nest_program_no_split[each_nest_program_no_split], 13);
-                                                    } else {
-                                                        writeFile(order, nest_program_no_split[each_nest_program_no_split]);
-                                                    }
+                                                    // the report have dispatch_details_sns but not accurated
+                                                    List<OrderInfo> get_order_num_by_order_sn = checkReportService.getOrderNumByOrderSN(get_order_sn_by_dispath_detail_sns.get(0).getOrderSN(), request.getSession().getId());
+                                                    writeFile(element_code[i], stringSplit[k], get_order_num_by_order_sn.get(0).getOrderNum(), order, nest_program_no_split[each_nest_program_no_split]);
                                                 }
-                                            } else if (get_order_status.get(0).getOrderStatus().equals("2")) {
-                                                writeFile(element_code[i], order, nest_program_no_split[each_nest_program_no_split], 2);
+                                            } else {
+                                                // the report have not dispatch_details_sns that is mean repeat
+                                                if (get_order_status.get(0).getOrderStatus().equals("0")) {
+                                                    // 0 is no dispatch
+                                                    writeFile(element_code[i], order, nest_program_no_split[each_nest_program_no_split], 0);
+                                                } else if (get_order_status.get(0).getOrderStatus().equals("1")) {
+                                                    // 1 is have dispatch
+                                                    List<GetOrderSNByDispatchDetailSNS> get_order_sn_by_order_num = checkReportService.getOrderSNByOrder(order, request.getSession().getId());
+                                                    List<RelManufactureElement> getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN = checkReportService.getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN(
+                                                            element_code[i], type, get_order_sn_by_order_num.get(0).getOrderSN(), request.getSession().getId());
+
+                                                    if (getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.size() == 0) {
+                                                        // 10 is mean have not data in rel_manufacture_element
+                                                        writeFile(element_code[i], order, nest_program_no_split[each_nest_program_no_split], 10);
+                                                    } else if (getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getIsFinished().equals("1")) {
+                                                        // 11 is mean finish
+                                                        writeFile(element_code[i], order, nest_program_no_split[each_nest_program_no_split], 11);
+                                                        break;
+                                                    } else if ((getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getExpectOnlineDate() == null) &&
+                                                            (getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getExpectOfflineDate() == null)) {
+                                                        // 12 is mean online and offline is null
+                                                        writeFile(element_code[i], order, nest_program_no_split[each_nest_program_no_split], 12);
+                                                    } else {
+                                                        //                                                String expect_online_calendar_before = getCalendar(getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getExpectOnlineDate());
+
+                                                        // format the online and offline and finish date
+                                                        // before online date five day and after online date five day
+                                                        Date expect_online_date = sdf.parse(getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getExpectOnlineDate());
+                                                        Calendar online_calendar_before = new GregorianCalendar();
+                                                        Calendar online_calendar_after = new GregorianCalendar();
+                                                        online_calendar_before.setTime(expect_online_date);
+                                                        online_calendar_after.setTime(expect_online_date);
+                                                        online_calendar_before.add(online_calendar_before.DATE, -5);
+                                                        online_calendar_after.add(online_calendar_after.DATE, +5);
+                                                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                                                        String expect_online_calendar_before = format.format(online_calendar_before.getTime());
+                                                        String expect_online_calendar_after = format.format(online_calendar_after.getTime());
+                                                        // calendar to date
+                                                        Date expect_online_date_before = sdf.parse(expect_online_calendar_before);
+                                                        Date expect_online_date_after = sdf.parse(expect_online_calendar_after);
+
+                                                        // after offline date five day and before offline date five day
+                                                        Date expect_offline_date = sdf.parse(getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getExpectOfflineDate());
+                                                        Calendar offline_calendar_before = new GregorianCalendar();
+                                                        Calendar offline_calendar_after = new GregorianCalendar();
+                                                        offline_calendar_before.setTime(expect_offline_date);
+                                                        offline_calendar_after.setTime(expect_offline_date);
+                                                        offline_calendar_before.add(offline_calendar_before.DATE, -5);
+                                                        offline_calendar_after.add(offline_calendar_before.DATE, +5);
+                                                        String expect_offline_calendar_before = format.format(offline_calendar_before.getTime());
+                                                        String expect_offline_calendar_after = format.format(offline_calendar_after.getTime());
+                                                        // calendar to date
+                                                        Date expect_offline_date_before = sdf.parse(expect_offline_calendar_before);
+                                                        Date expect_offline_date_after = sdf.parse(expect_offline_calendar_after);
+
+                                                        Date finish_date = sdf.parse(get_dispatch_detail_sns.get(j).getFinishDatetime());
+
+                                                        if ((expect_online_date_before.before(finish_date)) || ((expect_online_date_after.after(finish_date)) && (expect_offline_date_before.before(finish_date))) || (expect_offline_date_after.after(finish_date))) {
+                                                            // 13 is mean the date is before the online date or after the offline date
+                                                            writeFile(element_code[i], order, nest_program_no_split[each_nest_program_no_split], 13);
+                                                        } else {
+                                                            writeFile(order, nest_program_no_split[each_nest_program_no_split]);
+                                                        }
+                                                    }
+                                                } else if (get_order_status.get(0).getOrderStatus().equals("2")) {
+                                                    writeFile(element_code[i], order, nest_program_no_split[each_nest_program_no_split], 2);
+                                                }
                                             }
                                         }
                                     }
@@ -257,8 +261,10 @@ public class TaskConfirmController {
         file.createNewFile();
         FileWriter writer = new FileWriter(file, true);// true is mean don't overwirte previous content
         if(status == -1){
-            writer.write("order: " + order + " 重工，找不到訂單!!\n");
+            writer.write("訂單: " + order + " 重工，找不到訂單!!\n");
             element_code = order;
+        }else if(status == -2){
+            writer.write(element_code + ": 此工件未報工!!\n");
         }else if(status == 0){
             writer.write("element_code: " + element_code + " 重工，此訂單未派工!!\n");
         }else if(status == 2){
@@ -315,7 +321,9 @@ public class TaskConfirmController {
         file.createNewFile();
         FileWriter writer = new FileWriter(file, true);// true is mean don't overwirte previous content
         if(status == -1){
-            writer.write("order: " + element_code + " 重工，找不到訂單!!");
+            writer.write("訂單: " + element_code + " 重工，找不到訂單!!");
+        }else if(status == -2){
+            writer.write(element_code + ": 此工件未報工!!\n");
         }else if(status == 0){
             writer.write(element_code + ":沒有派工單、");
         }else if(status == 2){
