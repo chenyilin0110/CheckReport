@@ -49,4 +49,10 @@ public interface SelectDataForCheckReportMapper {
             + "select * from smb.rel_manufacture_element where element_code = #{element_code} and step_code = #{type} and order_sn = #{order_sn}"
             + "</script>")
     List<RelManufactureElement> getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN(@Param("element_code") String element_code, @Param("type") String type, @Param("order_sn") String order_sn);
+
+    @Select("<script>"
+            + "select program_id from qrcode_label.nest_info where program_id = #{nest_program}"
+            + "</script>")
+    String getProgramIdInQrcodeLabel(@Param("nest_program") String nest_program);
+
 }

@@ -63,4 +63,9 @@ public class CheckReportService {
         logger.info(">>> [" + sessionID + "] " + "get the element code is or not is_finished by element code: " + element_code + " , step_code: " + type + " ,order_sn: " + order_sn);
         return selectDataForCheckReportMapper.getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN(element_code, type, order_sn);
     }
+
+    public String getProgramIdInQrcodeLabel(String nest_program, String sessionID){
+        logger.info(">>> [" + sessionID + "] " + "get the nest program: " + nest_program + " and ready to find the " + nest_program + " in sql:qrcode_label table:nest_info");
+        return selectDataForCheckReportMapper.getProgramIdInQrcodeLabel(nest_program);
+    }
 }
