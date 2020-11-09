@@ -23,7 +23,7 @@ public class CheckReportService {
         logger.info(">>> [" + sessionID + "] " + "get element code by nest program no: " + nest_program_no);
         // get today and format YYYY--MM-DD
         final Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -3);// check the reports on Monday maybe the reports on Saturday and Sunday so minus three days
+        cal.add(Calendar.DATE, -15);// check the reports on Monday maybe the reports on Saturday and Sunday so minus three days
         SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd");
         String strDate = sdfDate.format(cal.getTime());
         return selectDataForCheckReportMapper.getElementCodeByNestProgramNO(nest_program_no, machine_code, type, strDate);
