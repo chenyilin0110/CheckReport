@@ -17,7 +17,7 @@ public interface SelectDataForCheckReportMapper {
 
     @Select("<script>"
             + "select sn, machine_code, element_code, finish_number, finish_datetime, cdate, dispatch_detail_sns from smb.element_log where finish_datetime >= #{strDate}"
-            + "and machine_code = #{machine_code}"
+            + "<if test='machine_code != null'> and machine_code = #{machine_code} </if>"
             + "and step_code = #{type}"
             + "and element_code = #{element_code}"
             + "and finish_number > '0'"
@@ -49,4 +49,10 @@ public interface SelectDataForCheckReportMapper {
             + "select * from smb.rel_manufacture_element where element_code = #{element_code} and step_code = #{type} and order_sn = #{order_sn}"
             + "</script>")
     List<RelManufactureElement> getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN(@Param("element_code") String element_code, @Param("type") String type, @Param("order_sn") String order_sn);
+
+    @Select("<script>"
+            + "select program_id from qrcode_label.nest_info where program_id = #{nest_program}"
+            + "</script>")
+    String getProgramIdInQrcodeLabel(@Param("nest_program") String nest_program);
+
 }

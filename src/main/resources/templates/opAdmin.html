@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>報工系統</title>
+    <title>檢查報工系統</title>
     <!-- <link th:href="@{/assets/plugins/datatables/css/jquery.dataTables.min.css}" rel="stylesheet" type="text/css" /> -->
     <link th:href="@{/assets/plugins/fontawesome-free/css/all.min.css}" rel="stylesheet">
     <link th:href="@{/assets/plugins/DataTables/datatables.min.css}" rel="stylesheet" >
@@ -152,11 +152,10 @@
         border-radius: 6px;
         text-align: center;
         height: 50px;
-        width: 130px;
+        /*width: 130px;*/
         outline: none;
         font-size: 24px;
     }
-
     select::-ms-expand{
         display: none;
     }
@@ -292,12 +291,13 @@
                 <div class="table-containter">
                     <div class="table-input">
                         <input type="text" id="order" placeholder="請輸入欲搜尋訂單編號" autofocus="autofocus">
-                        <input type="text" id="nest_program_no" placeholder="請輸入欲搜尋排版程式編號" autofocus="autofocus">
+                        <input type="text" id="number" placeholder="請輸入欲搜尋編號" autofocus="autofocus">
                     </div>
                     <div class="select-option-containter">
                         <select id="machine_code">
                             <option value="EML3610-TK">EML3610-TK</option>
                             <option value="FOM2-3015-1">FOM2-3015-1</option>
+                            <option value="">無</option>
                         </select>
                         <select id="type">
                             <option value="MA">排版</option>
@@ -328,6 +328,7 @@
 
     <script>
         $(document).ready(function() {
+            $('#search-task-btn').attr('disabled', true);
             $('#order').on('keyup', function(){
                 if($('#order').val().length > 0){
                     $('#search-task-btn').attr('disabled', false);
@@ -378,41 +379,48 @@
         function doubleConfirm(){
             Swal.fire({
                 title: "請再次確認欲搜尋的以下清單",
-                html: "<p>訂單號碼為:" + document.getElementById("order").value + "<br>排版程式編號: " + document.getElementById("nest_program_no").value +
+                html: "<p>訂單號碼為:" + document.getElementById("order").value + "<br>排版程式編號: " + document.getElementById("number").value +
                     "<br>機器代碼為: " + document.getElementById("machine_code").value + "<br>製程: " + translateChinese(document.getElementById("type").value) + "</p>",
                 showCancelButton: true,
                 cancelButtonText: "取消",
                 confirmButtonText: '確定'
             }).then((result) => {
                 if (result.value) {
-                    search(document.getElementById("order").value, document.getElementById("nest_program_no").value, document.getElementById("machine_code").value, document.getElementById("type").value);
+                    search(document.getElementById("order").value, document.getElementById("number").value, document.getElementById("machine_code").value, document.getElementById("type").value);
                 }
             });
         }
-        function search(order, nest_program_no, machine_code, type){
+        function search(order, number, machine_code, type){
             $.ajax({
                 url: "/task/manager/checkReport",
                 type: "POST",
-                async: false,
+                // async: false,
                 data: {
                     "order": order,
-                    "nest_program_no": nest_program_no,
+                    "number": number,
                     "machine_code": machine_code,
                     "type": type
+                },
+                beforeSend: function (){
+                    Swal.fire({
+                        title: "資料搜尋及寫入中，請稍後",
+                        html: "<img src=http://127.0.0.1:1010/assets/tempImg/loading.gif width: 200px height=200px>",
+                        showConfirmButton: false,
+                    });
                 },
                 dataType: 'json',
                 success: function(response){
                     var status = response.retStatus;
                     if(status.indexOf('Success')>= 0){
                         Swal.fire({
-                            title: "執行成功",
-                        html: "<p>已檢查完畢</p>",
+                            title: "Success",
+                        html: "<p>" + response.retMessage + "</p>",
                         confirmButtonText: '確定'
                         });
                     }else{
                         Swal.fire({
-                        title: "執行失敗",
-                        html: "<p>無報工紀錄</p>",
+                        title: "Failed",
+                        html: "<p>" + response.retMessage + "</p>",
                         confirmButtonText: '確定'
                         });
                     }

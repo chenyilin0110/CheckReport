@@ -23,7 +23,7 @@ public class CheckReportService {
         logger.info(">>> [" + sessionID + "] " + "get element code by nest program no: " + nest_program_no);
         // get today and format YYYY--MM-DD
         final Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -3);// check the reports on Monday maybe the reports on Saturday and Sunday so minus three days
+        cal.add(Calendar.DATE, -15);// check the reports on Monday maybe the reports on Saturday and Sunday so minus three days
         SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd");
         String strDate = sdfDate.format(cal.getTime());
         return selectDataForCheckReportMapper.getElementCodeByNestProgramNO(nest_program_no, machine_code, type, strDate);
@@ -62,5 +62,10 @@ public class CheckReportService {
     public List<RelManufactureElement> getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN(String element_code, String type, String order_sn, String sessionID){
         logger.info(">>> [" + sessionID + "] " + "get the element code is or not is_finished by element code: " + element_code + " , step_code: " + type + " ,order_sn: " + order_sn);
         return selectDataForCheckReportMapper.getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN(element_code, type, order_sn);
+    }
+
+    public String getProgramIdInQrcodeLabel(String nest_program, String sessionID){
+        logger.info(">>> [" + sessionID + "] " + "get the nest program: " + nest_program + " and ready to find the " + nest_program + " in sql:qrcode_label table:nest_info");
+        return selectDataForCheckReportMapper.getProgramIdInQrcodeLabel(nest_program);
     }
 }

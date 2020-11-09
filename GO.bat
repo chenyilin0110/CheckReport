@@ -1,1 +1,2 @@
-java -jar target/SmartBOSS-CheckReportWeb.jar
+start zip.bat
+start run.bat
