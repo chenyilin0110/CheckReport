@@ -123,7 +123,7 @@
     .table-containter {
         display: flex;
         justify-content: center;
-        margin-bottom: 90px;
+        margin-bottom: 10px;
     }
     
     .table-containter input {
@@ -164,27 +164,23 @@
         box-shadow: #467BF4;    
     }
 
-    .choice-function-container button {
-        font-family: Microsoft JhengHei;
+    .calender-container{
+        display: flex;
+        justify-content: center;
         font-size: 24px;
-        width: 300px;
-        height: 100px;
-        border-radius: 20px;
-        border: none;
-        background-color: #1C1F4C;
-        color: #ffffff;
-        margin: 15px 15px;
-        outline:none;
+        margin-top: 30px;
+        margin-bottom: 30px;
     }
 
-    .choice-function-container button:hover {
-        background-color: rgba(28, 31, 76, 0.8);
-        /* outline:none; */
+    .calender-container label{
+        display: block;
+        text-align: center;
+        margin: auto 15px;
     }
 
-    .choice-function-container button:active {
-        background-color: rgba(28, 31, 76, 0.6);
-        /* outline:none; */
+    .calender-container input{
+        display: block;
+        width: 200px;
     }
 
     .bottom-button-container {
@@ -307,6 +303,12 @@
                         </select>
                     </div>
                 </div>
+                <div class="calender-container">
+                    <label>日期區間</label>
+                    <input type="text" id="startTime" placeholder="From">
+                    <label>:</label>
+                    <input type="text" id="endTime" placeholder="To">
+                </div>
                 <div class="bottom-button-container">
                     <div>
                         <button class="op-btn" id="search-task-btn">
@@ -330,7 +332,15 @@
         $(document).ready(function() {
             $('#search-task-btn').attr('disabled', true);
             $('#order').on('keyup', function(){
-                if($('#order').val().length > 0){
+                if( ($('#order').val().length > 0) && ($('#number').val().length > 0) ){
+                    $('#search-task-btn').attr('disabled', false);
+                } else {
+                    $('#search-task-btn').attr('disabled', true);
+                }
+            });
+
+            $('#number').on('keyup', function(){
+                if( ($('#order').val().length > 0) && ($('#number').val().length > 0) ){
                     $('#search-task-btn').attr('disabled', false);
                 } else {
                     $('#search-task-btn').attr('disabled', true);
@@ -342,21 +352,21 @@
             $("#endTime").datepicker().datepicker("setDate", new Date());
 
             // get start time and formate input calender
-            var day = moment($(".download-report-form").find("#startTime").val()).add(0, 'days');
-            $(".download-report-form").find("#startTime").val(day.format('YYYY-MM-DD'));
-            $(".download-report-form").find("#endTime").val(day.format('YYYY-MM-DD'));
+            var day = moment($(".calender-container").find("#startTime").val()).add(0, 'days');
+            $(".calender-container").find("#startTime").val(day.format('YYYY-MM-DD'));
+            $(".calender-container").find("#endTime").val(day.format('YYYY-MM-DD'));
 
 
             // if user pick the calender
-            $(".download-report-form").find("#startTime").change(function(){
-                var day = moment($(".download-report-form").find("#startTime").val()).add(0, 'days');
-                $(".download-report-form").find("#startTime").val(day.format('YYYY-MM-DD'));
-                $(".download-report-form").find("#endTime").val(day.format('YYYY-MM-DD'));
+            $(".calender-container").find("#startTime").change(function(){
+                var day = moment($(".calender-container").find("#startTime").val()).add(0, 'days');
+                $(".calender-container").find("#startTime").val(day.format('YYYY-MM-DD'));
+                $(".calender-container").find("#endTime").val(day.format('YYYY-MM-DD'));
             });
 
-            $(".download-report-form").find("#endTime").change(function(){
-                var day = moment($(".download-report-form").find("#endTime").val()).add(0, 'days');
-                $(".download-report-form").find("#endTime").val(day.format('YYYY-MM-DD'));
+            $(".calender-container").find("#endTime").change(function(){
+                var day = moment($(".calender-container").find("#endTime").val()).add(0, 'days');
+                $(".calender-container").find("#endTime").val(day.format('YYYY-MM-DD'));
             });
 
         } );
