@@ -752,23 +752,23 @@ public class TaskCheckController {
         if(status == -3){
             writer.write("排版圖: " + element_code + "未上傳!!\n");
         }else if(status == -2){
-            writer.write(element_code + " 此工件製作失敗、");
+            writer.write("工件:" + element_code + "製作失敗、");
         }else if(status == -1){
-            writer.write("訂單: " + element_code + " 重工，找不到訂單!!");
+            writer.write("訂單: " + element_code + "重工，找不到訂單!!");
         }else if(status == 0){
-            writer.write(element_code + ":沒有派工單、");
+            writer.write("工件:" + element_code + "沒有派工單、");
         }else if(status == 2){
-            writer.write(element_code + ":該訂單已結案、");
+            writer.write("工件:" + element_code + "訂單已結案、");
         }else if(status == 10){
-            writer.write(element_code + ":沒有派工單、");
+            writer.write("工件:" + element_code + "沒有派工單、");
         }else if(status == 11){
-            writer.write(element_code + ":該訂單數量已足夠、");
+            writer.write("工件:" + element_code + "數量已足夠、");
         }else if(status == 12){
-            writer.write(element_code + ":未填寫上下限時間、");
+            writer.write("工件:" + element_code + "未填寫上下限時間、");
         }else if(status == 13){
-            writer.write(element_code + ":逾期、");
+            writer.write("工件:" + element_code + "逾期、");
         }else if(status == 999){
-            writer.write(element_code + ": Isfinished欄位是null、");
+            writer.write("工件:" + element_code + "Isfinished欄位是null、");
         }
         writer.flush();
         writer.close();
