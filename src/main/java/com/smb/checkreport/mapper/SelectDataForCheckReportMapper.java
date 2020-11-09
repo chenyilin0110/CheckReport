@@ -13,7 +13,7 @@ public interface SelectDataForCheckReportMapper {
             + "and parameter like CONCAT('%',#{nest_program_no},'%')"
             + "order by create_date desc"
             + "</script>")
-    List<ApiLog> getElementCodeByNestProgramNO(@Param("nest_program_no") String nest_program_no, @Param("machine_code") String machine_code, @Param("type") String type, @Param("strDate") String strDate);
+    List<ApiLog> getNestProgramByNestProgramNO(@Param("nest_program_no") String nest_program_no, @Param("machine_code") String machine_code, @Param("type") String type, @Param("strDate") String strDate);
 
     @Select("<script>"
             + "select sn, machine_code, element_code, finish_number, finish_datetime, cdate, dispatch_detail_sns from smb.element_log where finish_datetime >= #{strDate}"

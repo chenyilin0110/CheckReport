@@ -220,23 +220,24 @@ public class TaskCheckController {
                     logger.error(">>> [" + request.getSession().getId() + "] Can not get the input order: " + order);
                     writeFile(null, order, nest_program_no_split[each_nest_program_no_split], -1);
                 }else {
-                    List<ApiLog> get_elementCode = checkReportService.getElementCodeByNestProgramNO(nest_program_no_split[each_nest_program_no_split], machine_code, type, request.getSession().getId());
+                    List<ApiLog> get_nest_program = checkReportService.getNestProgramByNestProgramNO(nest_program_no_split[each_nest_program_no_split], machine_code, type, request.getSession().getId());
 
-                    if (get_elementCode.get(0) == null) {
-                        // can not get the report
+                    if (get_nest_program.get(0) == null) {
+                        // can not get the nest program number report
                         failedCount++;
                         not_find_nest_program_no.add(nest_program_no_split[each_nest_program_no_split]);
 
                         // check the nest program is exist or not in sql:qrcode_label  table:nest_info
                         String nest_program_id = checkReportService.getProgramIdInQrcodeLabel(nest_program_no_split[each_nest_program_no_split], request.getSession().getId());
                         if(nest_program_id == null){
+                            // -3 is mean the nest program not upload
                             writeFile(null, order, nest_program_no_split[each_nest_program_no_split],-3);
                         }else{
                             writeFile(order, nest_program_no_split[each_nest_program_no_split]);
                         }
                     } else {
                         deleteFile(order + "_" + nest_program_no_split[each_nest_program_no_split]); // if the file is exist
-                        JSONArray joArray = JSONArray.parseArray(get_elementCode.get(0).getParameter());
+                        JSONArray joArray = JSONArray.parseArray(get_nest_program.get(0).getParameter());
                         String element_code[] = new String[999];
                         // get element code in nest program number
                         for (int i = 0; i < joArray.size(); i++) {
