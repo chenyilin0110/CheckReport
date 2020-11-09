@@ -1,7 +1,7 @@
 @echo off
 
 set week=%date:~12,13%
-if %week%==¤@ goto :minusThree
+if %week%==ä¸€ goto :minusThree
 
 echo wscript.echo dateadd("d",-1,date) >%tmp%\tmp.vbs
 goto :run
@@ -19,10 +19,10 @@ if %d% LSS 9 set d=0%d%
 
 
 rem winrar.exe , zip dis, zip file
-"C:\Program Files\WinRAR\WinRAR.exe" a -ep1 "G:\§Úªº¶³ºÝµwºÐ\THU\Program\CheckReport\zip\%y%-%m%-%d%.rar" "G:\§Úªº¶³ºÝµwºÐ\THU\Program\CheckReport\output\"
+"C:\Program Files\WinRAR\WinRAR.exe" a -ep1 "G:\æˆ‘çš„é›²ç«¯ç¡¬ç¢Ÿ\THU\Program\CheckReport\zip\%y%-%m%-%d%.rar" "G:\æˆ‘çš„é›²ç«¯ç¡¬ç¢Ÿ\THU\Program\CheckReport\output\"
 
-rd "G:\§Úªº¶³ºÝµwºÐ\THU\Program\CheckReport\output\" /s /q
+rd "G:\æˆ‘çš„é›²ç«¯ç¡¬ç¢Ÿ\THU\Program\CheckReport\output\" /s /q
 
-md "G:\§Úªº¶³ºÝµwºÐ\THU\Program\CheckReport\output"
+md "G:\æˆ‘çš„é›²ç«¯ç¡¬ç¢Ÿ\THU\Program\CheckReport\output"
 
 exit
