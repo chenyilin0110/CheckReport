@@ -1,1 +1,0 @@
-element_code: PV116ODC0130-A 重工，沒有資料在rel_manufacture_element中!!
