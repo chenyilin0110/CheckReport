@@ -16,14 +16,14 @@ public interface SelectDataForCheckReportMapper {
     List<ApiLog> getNestProgramByNestProgramNO(@Param("nest_program_no") String nest_program_no, @Param("machine_code") String machine_code, @Param("type") String type, @Param("strDate") String strDate);
 
     @Select("<script>"
-            + "select sn, machine_code, element_code, finish_number, finish_datetime, cdate, dispatch_detail_sns from smb.element_log where finish_datetime >= #{strDate}"
+            + "select sn, machine_code, element_code, finish_number, finish_datetime, cdate, dispatch_detail_sns from smb.element_log where finish_datetime between #{startTime} and #{endTime}"
             + "<if test='machine_code != null'> and machine_code = #{machine_code} </if>"
             + "and step_code = #{type}"
             + "and element_code = #{element_code}"
             + "and finish_number > '0'"
             + "group by finish_datetime, dispatch_detail_sns order by finish_datetime desc;"
             + "</script>")
-    List<ElementLog> getDispatchDetailSNS(@Param("element_code") String element_code, @Param("machine_code") String machine_code, @Param("type") String type, @Param("strDate") String strDate);
+    List<ElementLog> getDispatchDetailSNS(@Param("element_code") String element_code, @Param("machine_code") String machine_code, @Param("type") String type, @Param("startTime") String startTime, @Param("endTime") String endTime);
 
     @Select("<script>"
             + "select order_sn from smb.dispatch_detail where sn = #{dispatch_detail_sns}"
@@ -55,4 +55,8 @@ public interface SelectDataForCheckReportMapper {
             + "</script>")
     String getProgramIdInQrcodeLabel(@Param("nest_program") String nest_program);
 
+    @Select("<script>"
+            + "select * from smb.dispatch_detail where rel_me_sn = #{rel_manufacture_element_sn}"
+            + "</script>")
+    List<DispatchDetail> getExpectOnlineAndOfflineInDispatchDetail(@Param("rel_manufacture_element_sn") String rel_manufacture_element_sn);
 }

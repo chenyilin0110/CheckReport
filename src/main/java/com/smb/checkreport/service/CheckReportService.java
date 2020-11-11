@@ -29,14 +29,17 @@ public class CheckReportService {
         return selectDataForCheckReportMapper.getNestProgramByNestProgramNO(nest_program_no, machine_code, type, strDate);
     }
 
-    public List<ElementLog> getDispatchDetailSNS(String element_code, String machine_code, String type, String sessionID){
+    public List<ElementLog> getDispatchDetailSNS(String element_code, String machine_code, String type, String time, String sessionID){
         logger.info(">>> [" + sessionID + "] " + "get dispatch ditail sns by element code: " + element_code);
-        // get today and format YYYY--MM-DD
-        final Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -3); // check the reports on Monday maybe the reports on Saturday and Sunday so minus three days
-        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd");
-        String strDate = sdfDate.format(cal.getTime());
-        return selectDataForCheckReportMapper.getDispatchDetailSNS(element_code, machine_code, type, strDate);
+        String startTime = time + " 00:00:00";
+        String endTime = time + " 23:59:59";
+
+//        // get today and format YYYY--MM-DD
+//        final Calendar cal = Calendar.getInstance();
+//        cal.add(Calendar.DATE, -15); // check the reports on Monday maybe the reports on Saturday and Sunday so minus three days
+//        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd");
+//        String strDate = sdfDate.format(cal.getTime());
+        return selectDataForCheckReportMapper.getDispatchDetailSNS(element_code, machine_code, type, startTime, endTime);
     }
 
     public List<GetOrderSNByDispatchDetailSNS> getOrderSNByDispatchDetailSNS(String dispatch_detail_sns, String sessionID){
@@ -68,4 +71,10 @@ public class CheckReportService {
         logger.info(">>> [" + sessionID + "] " + "get the nest program: " + nest_program + " and ready to find the " + nest_program + " in sql:qrcode_label table:nest_info");
         return selectDataForCheckReportMapper.getProgramIdInQrcodeLabel(nest_program);
     }
+
+    public List<DispatchDetail> getExpectOnlineAndOfflineInDispatchDetail(String rel_manufacture_element_sn, String sessionID){
+        logger.info(">>> [" + sessionID + "] " + "get expect online and offline by rel_manufacture_element_sn: " + rel_manufacture_element_sn);
+        return selectDataForCheckReportMapper.getExpectOnlineAndOfflineInDispatchDetail(rel_manufacture_element_sn);
+    }
+
 }
