@@ -1,7 +1,10 @@
-# CheckReport
+# **Check Report Project**
+![](https://img.shields.io/badge/license-THU__AI-blue) ![](https://img.shields.io/badge/JAVA-1.8-red)
 ## Status number correspondence table in writeFile function
 | 數值 | Mean|
 | :----- | :-----
+| -5 | Please check whether the expect online and offline of the dispatch has been removed
+| -4 | The smb web is not receive the machine report
 | -3 | The nest program is not upload
 | -2 | The element code is failed
 | -1 | Can not find the order infomation
