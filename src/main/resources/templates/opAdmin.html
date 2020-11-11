@@ -236,7 +236,7 @@
 
     .calender-container input{
         display: block;
-        width: 200px;
+        width: 160px;
     }
 
     .download-button button {
@@ -304,10 +304,10 @@
                     </div>
                 </div>
                 <div class="calender-container">
-                    <label>日期區間</label>
+                    <label>請選擇報工日期</label>
                     <input type="text" id="startTime" placeholder="From">
-                    <label>:</label>
-                    <input type="text" id="endTime" placeholder="To">
+<!--                    <label>:</label>-->
+<!--                    <input type="text" id="endTime" placeholder="To">-->
                 </div>
                 <div class="bottom-button-container">
                     <div>
@@ -396,11 +396,11 @@
                 confirmButtonText: '確定'
             }).then((result) => {
                 if (result.value) {
-                    search(document.getElementById("order").value, document.getElementById("number").value, document.getElementById("machine_code").value, document.getElementById("type").value);
+                    search(document.getElementById("order").value, document.getElementById("number").value, document.getElementById("machine_code").value, document.getElementById("type").value, document.getElementById("startTime").value);
                 }
             });
         }
-        function search(order, number, machine_code, type){
+        function search(order, number, machine_code, type, time){
             $.ajax({
                 url: "/task/manager/checkReport",
                 type: "POST",
@@ -409,7 +409,8 @@
                     "order": order,
                     "number": number,
                     "machine_code": machine_code,
-                    "type": type
+                    "type": type,
+                    "time": time
                 },
                 beforeSend: function (){
                     Swal.fire({
