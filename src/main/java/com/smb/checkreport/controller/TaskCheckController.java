@@ -32,6 +32,9 @@ public class TaskCheckController {
     @Autowired
     private CheckReportService checkReportService;
 
+    int failedCount = 0;
+    String[] ignore_element_code={"S1","S2","A01","A02","A03","A04","B01","01","T01","T5","T7","T81"};
+
     @RequestMapping(value = "/manager/checkReport")
     @ResponseBody
     public ResponseEntity<String> checkReport(HttpServletRequest request, Model model, String order, String number, String machine_code, String type, String time){
@@ -82,6 +85,7 @@ public class TaskCheckController {
             // split the number
             String[] element_code = number.split(" ");
             for (int each_element_code_split = 0; each_element_code_split < element_code.length; each_element_code_split++) {
+                failedCount = 0;
                 // add \n to split the each number in outputForExcel.txt file
                 if (each_element_code_split > 0) {
                     outputForExcelReport();
@@ -183,6 +187,9 @@ public class TaskCheckController {
                         }
                     }
                 }
+                if(failedCount == 0){
+                    outputForExcelReport("OK");
+                }
                 ar.setRetMessage("Successfully check the report and write the file: " + element_code.length);
                 ar.setRetStatus("Success");
             }
@@ -196,9 +203,6 @@ public class TaskCheckController {
     }
 
     public ResponseEntity<String> checkReportForMB(HttpServletRequest request, Model model, String order, String nest_program_no, String machine_code, String type, String time){
-        int failedCount = 0;
-        List<String> not_find_nest_program_no = new ArrayList<>();
-
         ApiReturn ar = new ApiReturn();
         try {
             // delete today.txt file
@@ -209,6 +213,7 @@ public class TaskCheckController {
             // split the nest program number
             String[] nest_program_no_split = nest_program_no.split(" ");
             for(int each_nest_program_no_split = 0; each_nest_program_no_split < nest_program_no_split.length; each_nest_program_no_split++) {
+                failedCount = 0;
                 // add \n to split the each nest program number in outputForExcel.txt file
                 if(each_nest_program_no_split > 0){
                     outputForExcelReport();
@@ -248,98 +253,108 @@ public class TaskCheckController {
                         }
                         for (int i = 0; i < element_code.length; i++) {
                             if (element_code[i] != null) { // success get element code in nest program number
-                                List<ElementLog> get_dispatch_detail_sns = checkReportService.getDispatchDetailSNS(element_code[i], machine_code, type, time, request.getSession().getId());
-                                if(get_dispatch_detail_sns.size()==0){
-                                    // can not find the element code log, the finished number is zero or the finish date is not input time
-                                    writeFile(element_code[i], order, nest_program_no_split[each_nest_program_no_split], -2);
-                                }else {
-                                    for (int j = 0; j < get_dispatch_detail_sns.size(); j++) {
-                                        // maybe dispatch_detail_sns have more than two number, so split the dispatch_detail_sns
-                                        String[] stringSplit = get_dispatch_detail_sns.get(j).getDispatchDetailSNS().split(",");
-                                        for (int k = 0; k < stringSplit.length; k++) {
-                                            if (!stringSplit[k].equals("")) {
-                                                List<GetOrderSNByDispatchDetailSNS> get_order_sn_by_dispath_detail_sns = checkReportService.getOrderSNByDispatchDetailSNS(stringSplit[k], request.getSession().getId());
-                                                List<GetOrderSNByDispatchDetailSNS> get_order_sn_by_order_num = checkReportService.getOrderSNByOrder(order, request.getSession().getId());
-                                                if(get_order_sn_by_dispath_detail_sns.size() == 0){
-                                                    // -5 is mean maybe the dispatch has been changed, please check the dispatch
-                                                    writeFile(element_code[i], order, nest_program_no_split[each_nest_program_no_split], -5);
-                                                }else if (get_order_sn_by_dispath_detail_sns.get(0).getOrderSN().equals(get_order_sn_by_order_num.get(0).getOrderSN())) {
-                                                    // the report accurated
-                                                    writeFile(element_code[i], stringSplit[k], order, nest_program_no_split[each_nest_program_no_split]);
-                                                } else {
-                                                    // the report have dispatch_details_sns but not accurated
-                                                    List<OrderInfo> get_order_num_by_order_sn = checkReportService.getOrderNumByOrderSN(get_order_sn_by_dispath_detail_sns.get(0).getOrderSN(), request.getSession().getId());
-                                                    writeFile(element_code[i], stringSplit[k], get_order_num_by_order_sn.get(0).getOrderNum(), order, nest_program_no_split[each_nest_program_no_split]);
-                                                }
-                                            } else {
-                                                // the report have not dispatch_details_sns that is mean repeat
-                                                if (get_order_status.get(0).getOrderStatus().equals("0")) {
-                                                    // 0 is no dispatch
-                                                    writeFile(element_code[i], order, nest_program_no_split[each_nest_program_no_split], 0);
-                                                } else if (get_order_status.get(0).getOrderStatus().equals("1")) {
-                                                    // here have dispatch
+                                boolean for_check_element_code_whether_need_ignore = false;
+                                for (int h = 0; h < ignore_element_code.length; h++){
+                                    if(element_code[i].equals(ignore_element_code[h])){
+                                        for_check_element_code_whether_need_ignore = true;
+                                        break;
+                                    }
+                                }
+
+                                if(!for_check_element_code_whether_need_ignore){
+                                    List<ElementLog> get_dispatch_detail_sns = checkReportService.getDispatchDetailSNS(element_code[i], machine_code, type, time, request.getSession().getId());
+                                    if(get_dispatch_detail_sns.size()==0){
+                                        // can not find the element code log, the finished number is zero or the finish date is not input time
+                                        writeFile(element_code[i], order, nest_program_no_split[each_nest_program_no_split], -2);
+                                    }else {
+                                        for (int j = 0; j < get_dispatch_detail_sns.size(); j++) {
+                                            // maybe dispatch_detail_sns have more than two number, so split the dispatch_detail_sns
+                                            String[] stringSplit = get_dispatch_detail_sns.get(j).getDispatchDetailSNS().split(",");
+                                            for (int k = 0; k < stringSplit.length; k++) {
+                                                if (!stringSplit[k].equals("")) {
+                                                    List<GetOrderSNByDispatchDetailSNS> get_order_sn_by_dispath_detail_sns = checkReportService.getOrderSNByDispatchDetailSNS(stringSplit[k], request.getSession().getId());
                                                     List<GetOrderSNByDispatchDetailSNS> get_order_sn_by_order_num = checkReportService.getOrderSNByOrder(order, request.getSession().getId());
-                                                    List<RelManufactureElement> getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN = checkReportService.getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN(
-                                                            element_code[i], type, get_order_sn_by_order_num.get(0).getOrderSN(), request.getSession().getId());
-
-                                                    if (getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.size() == 0) {
-                                                        // 10 is mean have not data in rel_manufacture_element
-                                                        writeFile(element_code[i], order, nest_program_no_split[each_nest_program_no_split], 10);
-                                                    } else if ((getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getExpectOnlineDate() == null) &&
-                                                            (getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getExpectOfflineDate() == null)) {
-                                                        List<DispatchDetail> get_expect_online_offline_in_dispatch_detail = checkReportService.getExpectOnlineAndOfflineInDispatchDetail(getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getSn(),
-                                                                request.getSession().getId());
-                                                        if(get_expect_online_offline_in_dispatch_detail.get(0).getExpectOnlineDate() == null &&
-                                                                (get_expect_online_offline_in_dispatch_detail.get(0).getExpectOfflineDate() == null)){
-                                                            // 11 is mean online and offline is null
-                                                            writeFile(element_code[i], order, nest_program_no_split[each_nest_program_no_split], 11);
-                                                        }else{
-                                                            // bug!!!
-                                                            writeFile(order, nest_program_no_split[each_nest_program_no_split]);
-                                                        }
-                                                    } else if ( (getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getIsFinished() == null) ||
-                                                            (getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getIsFinished().equals("0")) ) {
-                                                        // format the online and offline and finish date
-
-                                                        // before online date five day and after online date five day
-                                                        Date expect_online_date = sdf.parse(getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getExpectOnlineDate());
-                                                        int count = 0;
-                                                        String expect_online_calendar_before = FormatDate(expect_online_date, count);
-                                                        count++;
-                                                        String expect_online_calendar_after = FormatDate(expect_online_date, count);
-                                                        count++;
-                                                        // calendar to date
-                                                        Date expect_online_date_before = sdf.parse(expect_online_calendar_before);
-                                                        Date expect_online_date_after = sdf.parse(expect_online_calendar_after);
-
-                                                        // after offline date five day and before offline date five day
-                                                        Date expect_offline_date = sdf.parse(getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getExpectOfflineDate());
-                                                        String expect_offline_calendar_before = FormatDate(expect_offline_date, count);
-                                                        count++;
-                                                        String expect_offline_calendar_after = FormatDate(expect_offline_date, count);
-                                                        // calendar to date
-                                                        Date expect_offline_date_before = sdf.parse(expect_offline_calendar_before);
-                                                        Date expect_offline_date_after = sdf.parse(expect_offline_calendar_after);
-
-                                                        Date finish_date = sdf.parse(get_dispatch_detail_sns.get(j).getFinishDatetime());
-
-                                                        if ((expect_online_date_before.before(finish_date)) || ((expect_online_date_after.after(finish_date)) && (expect_offline_date_before.before(finish_date))) || (expect_offline_date_after.after(finish_date))) {
-                                                            // 12 is mean the date is before the online date or after the offline date
-                                                            writeFile(element_code[i], order, nest_program_no_split[each_nest_program_no_split], 12);
-                                                        } else {
-                                                            // bug!!!
-                                                            writeFile(order, nest_program_no_split[each_nest_program_no_split]);
-                                                        }
-                                                    } else if (getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getIsFinished().equals("1")) {
-                                                        // 13 is mean finish
-                                                        writeFile(element_code[i], order, nest_program_no_split[each_nest_program_no_split], 13);
-                                                        break;
-                                                    }  else {
-                                                        // bug!!!
-                                                        writeFile(order, nest_program_no_split[each_nest_program_no_split]);
+                                                    if(get_order_sn_by_dispath_detail_sns.size() == 0){
+                                                        // -5 is mean maybe the dispatch has been changed, please check the dispatch
+                                                        writeFile(element_code[i], order, nest_program_no_split[each_nest_program_no_split], -5);
+                                                    }else if (get_order_sn_by_dispath_detail_sns.get(0).getOrderSN().equals(get_order_sn_by_order_num.get(0).getOrderSN())) {
+                                                        // the report accurated
+                                                        writeFile(element_code[i], stringSplit[k], order, nest_program_no_split[each_nest_program_no_split]);
+                                                    } else {
+                                                        // the report have dispatch_details_sns but not accurated
+                                                        List<OrderInfo> get_order_num_by_order_sn = checkReportService.getOrderNumByOrderSN(get_order_sn_by_dispath_detail_sns.get(0).getOrderSN(), request.getSession().getId());
+                                                        writeFile(element_code[i], stringSplit[k], get_order_num_by_order_sn.get(0).getOrderNum(), order, nest_program_no_split[each_nest_program_no_split]);
                                                     }
-                                                } else if (get_order_status.get(0).getOrderStatus().equals("2")) {
-                                                    writeFile(element_code[i], order, nest_program_no_split[each_nest_program_no_split], 2);
+                                                } else {
+                                                    // the report have not dispatch_details_sns that is mean repeat
+                                                    if (get_order_status.get(0).getOrderStatus().equals("0")) {
+                                                        // 0 is no dispatch
+                                                        writeFile(element_code[i], order, nest_program_no_split[each_nest_program_no_split], 0);
+                                                    } else if (get_order_status.get(0).getOrderStatus().equals("1")) {
+                                                        // here have dispatch
+                                                        List<GetOrderSNByDispatchDetailSNS> get_order_sn_by_order_num = checkReportService.getOrderSNByOrder(order, request.getSession().getId());
+                                                        List<RelManufactureElement> getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN = checkReportService.getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN(
+                                                                element_code[i], type, get_order_sn_by_order_num.get(0).getOrderSN(), request.getSession().getId());
+
+                                                        if (getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.size() == 0) {
+                                                            // 10 is mean have not data in rel_manufacture_element
+                                                            writeFile(element_code[i], order, nest_program_no_split[each_nest_program_no_split], 10);
+                                                        } else if ((getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getExpectOnlineDate() == null) &&
+                                                                (getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getExpectOfflineDate() == null)) {
+                                                            List<DispatchDetail> get_expect_online_offline_in_dispatch_detail = checkReportService.getExpectOnlineAndOfflineInDispatchDetail(getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getSn(),
+                                                                    request.getSession().getId());
+                                                            if(get_expect_online_offline_in_dispatch_detail.get(0).getExpectOnlineDate() == null &&
+                                                                    (get_expect_online_offline_in_dispatch_detail.get(0).getExpectOfflineDate() == null)){
+                                                                // 11 is mean online and offline is null
+                                                                writeFile(element_code[i], order, nest_program_no_split[each_nest_program_no_split], 11);
+                                                            }else{
+                                                                // bug!!!
+                                                                writeFile(order, nest_program_no_split[each_nest_program_no_split]);
+                                                            }
+                                                        } else if ( (getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getIsFinished() == null) ||
+                                                                (getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getIsFinished().equals("0")) ) {
+                                                            // format the online and offline and finish date
+
+                                                            // before online date five day and after online date five day
+                                                            Date expect_online_date = sdf.parse(getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getExpectOnlineDate());
+                                                            int count = 0;
+                                                            String expect_online_calendar_before = FormatDate(expect_online_date, count);
+                                                            count++;
+                                                            String expect_online_calendar_after = FormatDate(expect_online_date, count);
+                                                            count++;
+                                                            // calendar to date
+                                                            Date expect_online_date_before = sdf.parse(expect_online_calendar_before);
+                                                            Date expect_online_date_after = sdf.parse(expect_online_calendar_after);
+
+                                                            // after offline date five day and before offline date five day
+                                                            Date expect_offline_date = sdf.parse(getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getExpectOfflineDate());
+                                                            String expect_offline_calendar_before = FormatDate(expect_offline_date, count);
+                                                            count++;
+                                                            String expect_offline_calendar_after = FormatDate(expect_offline_date, count);
+                                                            // calendar to date
+                                                            Date expect_offline_date_before = sdf.parse(expect_offline_calendar_before);
+                                                            Date expect_offline_date_after = sdf.parse(expect_offline_calendar_after);
+
+                                                            Date finish_date = sdf.parse(get_dispatch_detail_sns.get(j).getFinishDatetime());
+
+                                                            if ((expect_online_date_before.before(finish_date)) || ((expect_online_date_after.after(finish_date)) && (expect_offline_date_before.before(finish_date))) || (expect_offline_date_after.after(finish_date))) {
+                                                                // 12 is mean the date is before the online date or after the offline date
+                                                                writeFile(element_code[i], order, nest_program_no_split[each_nest_program_no_split], 12);
+                                                            } else {
+                                                                // bug!!!
+                                                                writeFile(order, nest_program_no_split[each_nest_program_no_split]);
+                                                            }
+                                                        } else if (getIsFinishedInRelManufactureElementByElementCodeAndStepCodeAndOrderSN.get(0).getIsFinished().equals("1")) {
+                                                            // 13 is mean finish
+                                                            writeFile(element_code[i], order, nest_program_no_split[each_nest_program_no_split], 13);
+                                                            break;
+                                                        }  else {
+                                                            // bug!!!
+                                                            writeFile(order, nest_program_no_split[each_nest_program_no_split]);
+                                                        }
+                                                    } else if (get_order_status.get(0).getOrderStatus().equals("2")) {
+                                                        writeFile(element_code[i], order, nest_program_no_split[each_nest_program_no_split], 2);
+                                                    }
                                                 }
                                             }
                                         }
@@ -351,30 +366,13 @@ public class TaskCheckController {
                         }
                     }
                 }
+                if(failedCount == 0){
+                    outputForExcelReport("OK");
+                }
             }
 
             ar.setRetMessage("Successfully check the report and write the file: " + nest_program_no_split.length);
             ar.setRetStatus("Success");
-//            if( (failedCount == 0) && (nest_program_no_split.length > 0) ){
-//                // mean the nest program is not null and no failed
-//                ar.setRetMessage("Successfully check the report and write the file: " + nest_program_no_split.length);
-//                ar.setRetStatus("Success");
-//            }else if(failedCount > 0){
-//                // mean have failed
-//                String failed_name = "";
-//                for(int each_not_find_nest_program_no = 0; each_not_find_nest_program_no < not_find_nest_program_no.size(); each_not_find_nest_program_no++){
-//                    if(each_not_find_nest_program_no == not_find_nest_program_no.size()-1){
-//                        failed_name = failed_name + not_find_nest_program_no.get(each_not_find_nest_program_no);
-//                    }else{
-//                        failed_name = failed_name + not_find_nest_program_no.get(each_not_find_nest_program_no) + ", ";
-//                    }
-//                }
-//                ar.setRetMessage("Successfully check the report and write the file: " + (nest_program_no_split.length - failedCount) + ", cannot get the report: " + failed_name + " ,and failed number: " + failedCount);
-//                ar.setRetStatus("Failed");
-//            }else{
-//                ar.setRetMessage("Can not get the input order infomation");
-//                ar.setRetStatus("Failed");
-//            }
         } catch (Exception e) {
             logger.error(">>> [" + request.getSession().getId() + "] " + e.getMessage());
             e.printStackTrace();
@@ -400,6 +398,7 @@ public class TaskCheckController {
             // split the number
             String[] element_code = number.split(" ");
             for (int each_element_code_split = 0; each_element_code_split < element_code.length; each_element_code_split++) {
+                failedCount = 0;
                 // add \n to split the each number in outputForExcel.txt file
                 if (each_element_code_split > 0) {
                     outputForExcelReport();
@@ -500,6 +499,9 @@ public class TaskCheckController {
                             }
                         }
                     }
+                }
+                if(failedCount == 0){
+                    outputForExcelReport("OK");
                 }
                 ar.setRetMessage("Successfully check the report and write the file: " + element_code.length);
                 ar.setRetStatus("Success");
@@ -528,6 +530,7 @@ public class TaskCheckController {
             // split the number
             String[] element_code = number.split(" ");
             for (int each_element_code_split = 0; each_element_code_split < element_code.length; each_element_code_split++) {
+                failedCount = 0;
                 // add \n to split the each number in outputForExcel.txt file
                 if (each_element_code_split > 0) {
                     outputForExcelReport();
@@ -629,6 +632,9 @@ public class TaskCheckController {
                         }
                     }
                 }
+                if(failedCount == 0){
+                    outputForExcelReport("OK");
+                }
                 ar.setRetMessage("Successfully check the report and write the file: " + element_code.length);
                 ar.setRetStatus("Success");
             }
@@ -655,17 +661,19 @@ public class TaskCheckController {
     }
 
     public void writeFile(String order, String nest_program_no) throws IOException{
+        failedCount++;
         Path file_name = Paths.get(System.getProperty("user.dir"),"\\output\\" + order + "_" + nest_program_no + ".txt");
         File file = new File(file_name.toString());
         file.createNewFile();
         FileWriter writer = new FileWriter(file, true);// true is mean don't overwirte previous content
-        writer.write("BUG!!!");
+        writer.write("bug!!!");
         writer.flush();
         writer.close();
         outputForExcelReport("bug!!!");
     }
 
     public void writeFile(String element_code, String order, String nest_program_no, int status) throws IOException {
+        failedCount++;
         Path file_name;
         if(nest_program_no == null){
             file_name = Paths.get(System.getProperty("user.dir"),"\\output\\" + order + "_" + element_code + ".txt");
@@ -684,7 +692,7 @@ public class TaskCheckController {
             writer.write("排版圖: " + nest_program_no + "未上傳!!\n");
             element_code = nest_program_no;
         }else if(status == -2) {
-            writer.write("element_code: " + element_code + " 此工件製作失敗!!\n");
+            writer.write("請確認element_code: " + element_code + "製作完工時間!!\n");
         }else if(status == -1){
             writer.write("訂單: " + order + " 重工，找不到訂單!!\n");
             element_code = order;
@@ -723,6 +731,7 @@ public class TaskCheckController {
     }
 
     public void writeFile(String element_code, String dispatch_detail_sns, String mappingToOtherOrder, String order, String nest_program_no) throws IOException {
+        failedCount++;
         Path file_name;
         if(nest_program_no == null){
             file_name = Paths.get(System.getProperty("user.dir"),"\\output\\" + order + "_" + element_code + ".txt");
@@ -764,7 +773,7 @@ public class TaskCheckController {
         File file = new File(file_name.toString());
         file.createNewFile();
         FileWriter writer = new FileWriter(file, true);// true is mean don't overwirte previous content
-        writer.write("bug!!!! 、 ");
+        writer.write(element_code + "、");
         writer.flush();
         writer.close();
     }
@@ -783,7 +792,7 @@ public class TaskCheckController {
         }else if(status == -3){
             writer.write("排版圖:" + element_code + "未上傳!!");
         }else if(status == -2){
-            writer.write("工件:" + element_code + "製作失敗、");
+            writer.write("請確認工件:" + element_code + "製作完工時間、");
         }else if(status == -1){
             writer.write("訂單:" + element_code + "重工，找不到訂單!!");
         }else if(status == 0){
