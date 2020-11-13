@@ -46,6 +46,10 @@ body {
     font-family: Microsoft JhengHei;
 }
 
+::placeholder {
+    color: #d6d6d6;
+}
+
 .top-bar-container {
     background-color: #1C1F4C;
     width: 100%;
@@ -77,9 +81,10 @@ body {
 
 .logout-form .top-bar-function {
     height: 75px;
+    /* line-height: 75px; */
     display: flex;
     align-items: center;
-    float: right;
+    float: right;    
 }
 
 .logout-form button {
@@ -96,34 +101,48 @@ body {
     white-space: nowrap;
 }
 
-.complete-info-container{
-    padding-top: 100px;
-    text-align: center;
+.mainframe-container {
+    padding-top: 80px;
+    padding-bottom: 30px;
 }
 
-.complete-info-container p {
-    display: block;
+.input-title {
+    text-align: center;
+    line-height: 60px;
+    padding-bottom: 10px;
     font-size: 36px;
     font-weight: bold;
 }
 
-.complete-info-container .info-content {
-    color: blue;
+.machine-select-form {
+    display: block;
+    margin: 0 auto;
 }
 
-.complete-info-container .info-memo {
-    padding-top: 36px;
+.machine-select-form input {
+    border: 2px solid #d6d6d6;
+    border-radius: 6px;
+    width: 370px;
+    padding: 10px 6px;
+    font-family: Microsoft JhengHei;
+    font-size: 30px;
+    margin: 0 auto;   
+    outline:none;
+    /* transition: width 0.4s ease-in-out; */
+    
 }
 
-.bottom-button-container {
-    display: flex;        
-    justify-content: center;
+.machine-select-form input:focus {
+    /* border: 2px solid #555555; */
+    /* border-radius: 6px; */
+    /* width: 300px; */
+    background-color: rgb(255, 242, 242);
 }
 
-.bottom-button-container button {
+.machine-select-form button {
     font-family: Microsoft JhengHei;
     font-size: 40px;
-    width: 250px;
+    /* width: 260px; */
     height: 82px;
     background-color: #1C1F4C;
     color: #ffffff;
@@ -133,10 +152,10 @@ body {
     margin-top: 60px;
 }
 
-.bottom-button-container button:hover {
+.machine-select-form button:hover {
     background-color: rgba(28, 31, 76, 0.8);
 }
 
-.bottom-button-container button:active {
+.machine-select-form button:active {
     background-color: rgba(28, 31, 76, 0.6);
 }

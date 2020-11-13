@@ -46,6 +46,10 @@ body {
     font-family: Microsoft JhengHei;
 }
 
+::placeholder {
+    color: #d6d6d6;
+}
+
 .top-bar-container {
     background-color: #1C1F4C;
     width: 100%;
@@ -77,9 +81,10 @@ body {
 
 .logout-form .top-bar-function {
     height: 75px;
+    /* line-height: 75px; */
     display: flex;
     align-items: center;
-    float: right;
+    float: right;        
 }
 
 .logout-form button {
@@ -96,47 +101,131 @@ body {
     white-space: nowrap;
 }
 
-.complete-info-container{
-    padding-top: 100px;
-    text-align: center;
+.mainframe-container {
+    padding-top: 20px;
+    /* padding-bottom: 30px; */
 }
 
-.complete-info-container p {
-    display: block;
-    font-size: 36px;
+.input-title {
+    text-align: center;
+    line-height: 60px;
+    padding-bottom: 10px;
+    font-size: 30px;
     font-weight: bold;
 }
 
-.complete-info-container .info-content {
-    color: blue;
+.table-filter-containter {
+    display: block;
+    margin: 0 auto;
+    text-align: center;
 }
 
-.complete-info-container .info-memo {
-    padding-top: 36px;
+.table-filter-containter input {
+    border: 2px solid #000000;
+    border-radius: 6px;
+    width: 288px;
+    height: 50px;
+    padding: 10px 6px;
+    font-family: Microsoft JhengHei;
+    font-size: 24px;
+    margin: 0 auto;   
+    outline:none;
+}
+
+.table-filter-containter input:focus {
+    /* border: 2px solid #555555; */
+    /* border-radius: 6px; */
+    /* width: 300px; */
+    background-color: rgb(255, 242, 242);
+}
+
+.table-filter-containter button {
+    margin-left: 4px;
+    background-color: #1C1F4C;
+    color: #ffffff;
+    font-family: Microsoft JhengHei;
+    font-size: 24px;
+    line-height: 24px;
+    height: 50px;
+    border-radius: 6px;
+    border: none;
+    outline: none;
+}
+
+.table-filter-containter button:hover {
+    background-color: rgba(28, 31, 76, 0.8);
+    /* outline:none; */
+}
+
+.table-filter-containter button:active {
+    background-color: rgba(28, 31, 76, 0.6);
+}
+
+.dispatch-order-container {
+    padding-bottom: 40px;
+    font-size: 14px;
+    padding-left: 20px;
+    padding-right: 20px;
+    /* margin: auto; */
+}
+
+#dispatch-order-table {
+    margin: 0 auto;
 }
 
 .bottom-button-container {
-    display: flex;        
-    justify-content: center;
+    display: flex;
+    justify-content:center;
+    margin-bottom: 20px;
 }
 
 .bottom-button-container button {
     font-family: Microsoft JhengHei;
-    font-size: 40px;
-    width: 250px;
-    height: 82px;
+    font-size: 24px;
+    width: 190px;
+    height: 130px;
+    border-radius: 20px;
+    border: none;
     background-color: #1C1F4C;
     color: #ffffff;
-    border: none;
-    border-radius: 20px;
-    outline:none;        
-    margin-top: 60px;
+    margin: 0 15px;
+    outline:none;
 }
 
 .bottom-button-container button:hover {
     background-color: rgba(28, 31, 76, 0.8);
+    /* outline:none; */
 }
 
 .bottom-button-container button:active {
     background-color: rgba(28, 31, 76, 0.6);
+    /* outline:none; */
+}
+
+.bottom-button-container button:disabled {
+    background-color: rgba(141, 148, 154, 0.6);
+}
+
+.op-btn i {
+    font-size: 40px;
+}
+
+.op-btn span{
+    font-size: 40px;
+    margin-left: 4px;
+}
+
+.task-content.select-checkbox::before{
+    width: 20px !important;
+    height: 20px !important;
+    border: 2px solid #595D6E !important;
+    margin-top: -8px !important;
+}
+
+.dataTables_empty {
+    font-size: 20px !important;
+}
+
+.selected td {
+    background-color: #AAAAAA !important;
 }

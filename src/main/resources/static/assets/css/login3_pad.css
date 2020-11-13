@@ -46,84 +46,100 @@ body {
     font-family: Microsoft JhengHei;
 }
 
+::placeholder {
+    color: #d6d6d6;
+}
+
 .top-bar-container {
     background-color: #1C1F4C;
     width: 100%;
     height: 75px;
     color: #ffffff;
-    display: flex;
-    justify-content: space-between;
 }
 
-.top-bar-container .top-bar-identity {
-    padding-left: 10px;
-    font-size: 26px;
-    line-height: 75px;
-    width: 100px;
-    white-space: nowrap;
-} 
-
-.top-bar-container .top-bar-status {
+.top-bar-container .top-bar-title {
     font-size: 40px;
+    font-weight: bold;
+    text-align: center;
     line-height: 75px;
-    font-weight: bold;
 }
 
-.top-bar-container .logout-form {
-    width: 100px;
-    padding-right: 10px;
-    height: 75px;
+.mainframe-container {
+    padding-top: 80px;
+    padding-bottom: 30px;
 }
 
-.logout-form .top-bar-function {
-    height: 75px;
+.language-select-container {
     display: flex;
-    align-items: center;
-    float: right;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 30px;
 }
 
-.logout-form button {
+.language-select-container button{
     font-family: Microsoft JhengHei;
-    font-size: 26px;
-    border-radius: 30px;
+    font-size: 24px;
+    background-color: #1C1F4C;
+    color: #ffffff;
     border: none;
-    font-weight: bold;
-    outline: none;
-    /* height: 43px;
-    width: 100px; */
-    background-color: #EBEBEB;
-    text-align: center;
-    white-space: nowrap;
+    border-radius: 30px;
+    outline:none;
+    width: 170px;
+    height: 42px;
+    margin: 0 10px;
 }
 
-.complete-info-container{
-    padding-top: 100px;
-    text-align: center;
+.language-select-container button:hover {
+    background-color: rgba(28, 31, 76, 0.8);
 }
 
-.complete-info-container p {
-    display: block;
+.language-select-container button:active {
+    background-color: rgba(28, 31, 76, 0.6);
+}
+
+.input-title {
+    text-align: center;
+    line-height: 60px;
+    padding-bottom: 10px;
     font-size: 36px;
     font-weight: bold;
 }
 
-.complete-info-container .info-content {
-    color: blue;
+.login-form {
+    display: block;
+    margin: 0 auto;
 }
 
-.complete-info-container .info-memo {
-    padding-top: 36px;
+.login-form input {
+    border: 2px solid #d6d6d6;
+    border-radius: 6px;
+    width: 370px;
+    height: 40px;
+    padding: 10px 6px;
+    font-family: Microsoft JhengHei;
+    font-size: 30px;
+    margin: 0 auto;   
+    outline:none;
+    /* transition: width 0.4s ease-in-out; */
+    
 }
 
-.bottom-button-container {
-    display: flex;        
+.login-form input:focus {
+    /* border: 2px solid #555555; */
+    /* border-radius: 6px; */
+    /* width: 300px; */
+    background-color: rgb(255, 242, 242);
+}
+
+.login-action {
+    display: flex;
     justify-content: center;
 }
 
-.bottom-button-container button {
+.login-action button {
     font-family: Microsoft JhengHei;
     font-size: 40px;
-    width: 250px;
+    /* width: 260px; */
     height: 82px;
     background-color: #1C1F4C;
     color: #ffffff;
@@ -131,12 +147,21 @@ body {
     border-radius: 20px;
     outline:none;        
     margin-top: 60px;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
-.bottom-button-container button:hover {
+.login-action button:hover {
     background-color: rgba(28, 31, 76, 0.8);
 }
 
-.bottom-button-container button:active {
+.login-action button:active {
     background-color: rgba(28, 31, 76, 0.6);
+}
+
+.error-msg {
+    padding-top: 10px;
+    text-align: center;
+    color: red;
+    font-size: 20px;
 }
