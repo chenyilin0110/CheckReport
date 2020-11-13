@@ -33,7 +33,8 @@ public class TaskCheckController {
     private CheckReportService checkReportService;
 
     int failedCount = 0;
-    String[] ignore_element_code={"S1","S2","A01","A02","A03","A04","B01","01","T01","T5","T7","T81"};
+    boolean next_is_null_or_not = false;
+    String[] ignore_element_code={"S1","S2","A01","A02","A03","A04","B01","01","T1","T01","T5","T7","T80","T81"};
 
     @RequestMapping(value = "/manager/checkReport")
     @ResponseBody
@@ -99,7 +100,11 @@ public class TaskCheckController {
                     writeFile(null, order, null, -1);
                 } else {
                     deleteFile(order + "_" + element_code[each_element_code_split]); // if the file is exist
-
+                    next_is_null_or_not = false;
+                    if(each_element_code_split == element_code.length - 1){
+                        // the element code is last
+                        next_is_null_or_not = true;
+                    }
                     // success get element code
                     List<ElementLog> get_dispatch_detail_sns = checkReportService.getDispatchDetailSNS(element_code[each_element_code_split], machine_code, type, time, request.getSession().getId());
                     if(get_dispatch_detail_sns.size()==0){
@@ -252,6 +257,7 @@ public class TaskCheckController {
                             element_code[i] = jo.getString("element_code");
                         }
                         for (int i = 0; i < element_code.length; i++) {
+                            next_is_null_or_not = false;
                             if (element_code[i] != null) { // success get element code in nest program number
                                 boolean for_check_element_code_whether_need_ignore = false;
                                 for (int h = 0; h < ignore_element_code.length; h++){
@@ -259,6 +265,11 @@ public class TaskCheckController {
                                         for_check_element_code_whether_need_ignore = true;
                                         break;
                                     }
+                                }
+                                int next = i;
+                                next++;
+                                if(element_code[next] == null){
+                                    next_is_null_or_not = true;
                                 }
 
                                 if(!for_check_element_code_whether_need_ignore){
@@ -412,7 +423,11 @@ public class TaskCheckController {
                     writeFile(null, order, null, -1);
                 } else {
                     deleteFile(order + "_" + element_code[each_element_code_split]); // if the file is exist
-
+                    next_is_null_or_not = false;
+                    if(each_element_code_split == element_code.length - 1){
+                        // the element code is last
+                        next_is_null_or_not = true;
+                    }
                     // success get element code
                     List<ElementLog> get_dispatch_detail_sns = checkReportService.getDispatchDetailSNS(element_code[each_element_code_split], machine_code, type, time, request.getSession().getId());
                     if(get_dispatch_detail_sns.size()==0){
@@ -544,7 +559,11 @@ public class TaskCheckController {
                     writeFile(null, order, null, -1);
                 } else {
                     deleteFile(order + "_" + element_code[each_element_code_split]); // if the file is exist
-
+                    next_is_null_or_not = false;
+                    if(each_element_code_split == element_code.length - 1){
+                        // the element code is last
+                        next_is_null_or_not = true;
+                    }
                     // success get element code
                     List<ElementLog> get_dispatch_detail_sns = checkReportService.getDispatchDetailSNS(element_code[each_element_code_split], machine_code, type, time, request.getSession().getId());
                     if(get_dispatch_detail_sns.size()==0){
@@ -773,12 +792,17 @@ public class TaskCheckController {
         File file = new File(file_name.toString());
         file.createNewFile();
         FileWriter writer = new FileWriter(file, true);// true is mean don't overwirte previous content
-        writer.write(element_code + "、");
+        writer.write(element_code);
         writer.flush();
         writer.close();
     }
 
     public void outputForExcelReport(String element_code, int status) throws IOException{
+        String temp = "";
+        if(!next_is_null_or_not){
+            // the element code is not last
+            temp += "、";
+        }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date today = new Date();
         Path file_name = Paths.get(System.getProperty("user.dir"),"\\output\\" + sdf.format(today).toString() + ".txt");
@@ -786,27 +810,27 @@ public class TaskCheckController {
         file.createNewFile();
         FileWriter writer = new FileWriter(file, true);// true is mean don't overwirte previous content
         if(status == -5){
-            writer.write("工件:" + element_code + "請檢查派工單上下限時間是否被移除、");
+            writer.write("工件:" + element_code + "請檢查派工單上下限時間是否被移除" + temp);
         }else if(status == -4){
             writer.write("報工主機未收到排版圖:" + element_code + " 報工資訊(機台收數據有收到)!!");
         }else if(status == -3){
             writer.write("排版圖:" + element_code + "未上傳!!");
         }else if(status == -2){
-            writer.write("請確認工件:" + element_code + "製作完工時間、");
+            writer.write("請確認工件:" + element_code + "製作完工時間" + temp);
         }else if(status == -1){
             writer.write("訂單:" + element_code + "重工，找不到訂單!!");
         }else if(status == 0){
-            writer.write("工件:" + element_code + "沒有派工單、");
+            writer.write("工件:" + element_code + "沒有派工單" + temp);
         }else if(status == 2){
-            writer.write("工件:" + element_code + "訂單已結案、");
+            writer.write("工件:" + element_code + "訂單已結案" + temp);
         }else if(status == 10){
-            writer.write("工件:" + element_code + "沒有派工單、");
+            writer.write("工件:" + element_code + "沒有派工單" + temp);
         }else if(status == 11){
-            writer.write("工件:" + element_code + "未填寫上下限時間、");
+            writer.write("工件:" + element_code + "未填寫上下限時間" + temp);
         }else if(status == 12){
-            writer.write("工件:" + element_code + "逾期、");
+            writer.write("工件:" + element_code + "逾期" + temp);
         }else if(status == 13){
-            writer.write("工件:" + element_code + "數量已足夠、");
+            writer.write("工件:" + element_code + "數量已足夠" + temp);
         }
 
         writer.flush();
@@ -814,13 +838,18 @@ public class TaskCheckController {
     }
 
     public void outputForExcelReport(String element_code, String otherOrder) throws IOException{
+        String temp = "";
+        if(!next_is_null_or_not){
+            // the element code is not last
+            temp += "、";
+        }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date today = new Date();
         Path file_name = Paths.get(System.getProperty("user.dir"),"\\output\\" + sdf.format(today).toString() + ".txt");
         File file = new File(file_name.toString());
         file.createNewFile();
         FileWriter writer = new FileWriter(file, true);// true is mean don't overwirte previous content
-        writer.write("工件:" + element_code + "報工到訂單:" + otherOrder + "、");
+        writer.write("工件:" + element_code + "報工到訂單:" + otherOrder + temp);
         writer.flush();
         writer.close();
     }
