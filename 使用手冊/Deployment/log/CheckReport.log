@@ -1,0 +1,23 @@
+[20-12-28 15:40:18.678][INFO][StartupInfoLogger-50] Starting SmbReportApplication v1.0-SNAPSHOT on LAPTOP-V7U8TA2F with PID 10388 (C:\Users\User\Desktop\Excel\SmartBOSS-CheckReportWeb.jar started by User in C:\Users\User\Desktop\Excel)
+[20-12-28 15:40:18.688][INFO][SpringApplication-675] No active profile set, falling back to default profiles: default
+[20-12-28 15:40:19.882][INFO][DruidDBConfig-64] config main mapper
+[20-12-28 15:40:22.096][INFO][StartupInfoLogger-59] Started SmbReportApplication in 3.79 seconds (JVM running for 4.999)
+[20-12-28 15:41:13.807][INFO][StartupInfoLogger-50] Starting SmbReportApplication v1.0-SNAPSHOT on LAPTOP-V7U8TA2F with PID 26408 (C:\Users\User\Desktop\Excel\SmartBOSS-CheckReportWeb.jar started by User in C:\Users\User\Desktop\Excel)
+[20-12-28 15:41:13.816][INFO][SpringApplication-675] No active profile set, falling back to default profiles: default
+[20-12-28 15:41:14.588][INFO][DruidDBConfig-64] config main mapper
+[20-12-28 15:41:16.491][INFO][StartupInfoLogger-59] Started SmbReportApplication in 2.941 seconds (JVM running for 3.757)
+[20-12-28 15:41:20.988][INFO][LoginController-31] >>> [C736C24E51E4B3530957996190B62A90]  - Login successful, start to trello export
+[20-12-28 15:41:22.689][INFO][TaskCheckController-1044] >>> [C736C24E51E4B3530957996190B62A90] Success and go to search
+[20-12-28 15:42:05.621][INFO][TaskCheckController-921] >>> [C736C24E51E4B3530957996190B62A90] Success get the member name: PM
+[20-12-28 15:42:05.942][INFO][TaskCheckController-942] 開始展開分類清單: 待討論項目, 卡片總數: 6
+[20-12-28 15:42:06.146][INFO][TaskCheckController-942] 開始展開分類清單: 近期要完成項目, 卡片總數: 13
+[20-12-28 15:42:06.201][INFO][TaskCheckController-942] 開始展開分類清單: 執行中項目1-2周, 卡片總數: 16
+[20-12-28 15:42:06.252][INFO][TaskCheckController-942] 開始展開分類清單: 已完成項目, 卡片總數: 8
+[20-12-28 15:42:06.325][INFO][TaskCheckController-942] 開始展開分類清單: MileStone, 卡片總數: 1
+[20-12-28 16:06:15.193][INFO][StartupInfoLogger-50] Starting SmbReportApplication v1.0-SNAPSHOT on LAPTOP-V7U8TA2F with PID 16056 (C:\Users\User\Desktop\Excel\SmartBOSS-CheckReportWeb.jar started by User in C:\Users\User\Desktop\Excel)
+[20-12-28 16:06:15.202][INFO][SpringApplication-675] No active profile set, falling back to default profiles: default
+[20-12-28 16:06:16.584][INFO][DruidDBConfig-64] config main mapper
+[20-12-28 16:06:19.519][INFO][StartupInfoLogger-59] Started SmbReportApplication in 4.777 seconds (JVM running for 6.167)
+[20-12-28 16:06:25.252][INFO][LoginController-24] >>> [42466A562012D57B4804D661C916C5E5]  - Login successful, start to check report
+[20-12-28 16:06:29.133][INFO][LoginController-31] >>> [42466A562012D57B4804D661C916C5E5]  - Login successful, start to trello export
+[20-12-28 16:06:30.256][INFO][TaskCheckController-1044] >>> [42466A562012D57B4804D661C916C5E5] Success and go to search

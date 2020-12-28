@@ -1,6 +1,5 @@
 package com.smb.checkreport.service;
 
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.smb.checkreport.bean.*;
@@ -9,8 +8,16 @@ import com.smb.checkreport.mapper.GetTrelloDataMapper;
 import com.smb.checkreport.mapper.SelectDataForCheckReportMapper;
 import com.smb.checkreport.utility.ConfigLoader;
 import com.smb.checkreport.utility.Constant;
+import com.smb.checkreport.utility.Utility;
+import com.smb.checkreport.utility.WebAPI;
 import io.joshworks.restclient.http.HttpResponse;
 import io.joshworks.restclient.http.JsonNode;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +37,67 @@ public class TrelloExportService {
     private GetTrelloDataMapper getTrelloDataMapper;
 
     private static Logger logger = LoggerFactory.getLogger(TrelloExportService.class);
+
+    public void getTrello(HttpServletRequest request) throws IOException, ParseException {
+        String returnStr = new String();
+        Properties prop = ConfigLoader.loadConfig("trello.properties");
+
+        //權限相關
+        String trelloKey = prop.getProperty("trello.key");
+        String trelloToken = prop.getProperty("trello.token");
+        String urlParam = "?key=" + trelloKey + "&token=" + trelloToken;
+
+        //源頭board
+        String boardID = prop.getProperty("trello.board");
+
+        //取得人員對照表
+        Map<String, String> membersMap = new HashMap<String, String>();
+        returnStr = WebAPI.sendAPI_trello("boards/"+boardID+"/members"+urlParam);
+        List<TrelloMembers> listTrelloMembers = JSONArray.parseArray(returnStr, TrelloMembers.class);
+        for(TrelloMembers tm : listTrelloMembers){
+            if(tm.getFullName().toUpperCase().contains("JASON")){
+                membersMap.put(tm.getId(), "Jason");
+            } else if(tm.getFullName().toUpperCase().contains("YILIN")){
+                membersMap.put(tm.getId(), "羿霖");
+            } else if(tm.getFullName().toUpperCase().contains("YOUNG")){
+                membersMap.put(tm.getId(), "孟揚");
+            } else if(tm.getFullName().toUpperCase().contains("XERIOU")){
+                membersMap.put(tm.getId(), "喜仙");
+            } else if(tm.getFullName().toUpperCase().contains("LUNCHI")){
+                membersMap.put(tm.getId(), "倫奇");
+            } else if(tm.getFullName().contains("曉真")){
+                membersMap.put(tm.getId(), "曉真");
+            }
+        }
+
+        //取得分類列表
+        returnStr = WebAPI.sendAPI_trello("boards/"+boardID+"/lists"+urlParam);
+        List<TrelloLists> listTrelloLists = JSONArray.parseArray(returnStr, TrelloLists.class);
+
+        //取得列表底下 Card
+        for(TrelloLists tl : listTrelloLists){
+            logger.debug(tl.toString());
+            returnStr = WebAPI.sendAPI_trello("lists/"+tl.getId()+"/cards"+urlParam);
+            List<TrelloCards> listTrelloCards = JSONArray.parseArray(returnStr, TrelloCards.class);
+            for(TrelloCards tc : listTrelloCards){
+                logger.debug(tc.toString());
+                List<TrelloCheckLists> listTrelloCheckLists = new ArrayList<TrelloCheckLists>();
+                int accCheckItemsCnt = 0;
+                for(String icl : tc.getIdCheckLists()){
+                    returnStr = WebAPI.sendAPI_trello("checklists/"+icl+urlParam);
+                    TrelloCheckLists tcl = JSONObject.parseObject(returnStr, TrelloCheckLists.class);
+                    tcl.setCheckItemsCnt(tcl.getCheckItems().size());
+                    accCheckItemsCnt += tcl.getCheckItemsCnt();
+                    listTrelloCheckLists.add(tcl);
+                }
+                tc.setCheckLists((ArrayList<TrelloCheckLists>) listTrelloCheckLists);
+                tc.setCheckItemsCnt(accCheckItemsCnt);
+            }
+            tl.setCards((ArrayList<TrelloCards>) listTrelloCards);
+        }
+        request.getSession().setAttribute("listTrelloLists", listTrelloLists);
+        request.getSession().setAttribute("membersMap", membersMap);
+    }
 
     public String all(HttpServletRequest request) throws IOException, ParseException {
 
@@ -96,7 +164,7 @@ public class TrelloExportService {
 
         // prepare write to csv
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-        String data = "Card,項目,說明,已完成,dueDay,Owner,被註\r\n";
+        String data = "Card,項目,說明,已完成,dueDay,Owner,備註\r\n";
 
         // step 4. get checkItems on a checklist
         for(int eachCards = 0; eachCards < cards.size(); eachCards++){

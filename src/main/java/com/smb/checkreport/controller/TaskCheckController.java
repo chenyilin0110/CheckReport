@@ -4,9 +4,17 @@ import com.smb.checkreport.bean.*;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.smb.checkreport.mapper.GetTrelloDataMapper;
 import com.smb.checkreport.service.CheckReportService;
 import com.smb.checkreport.service.TrelloExportService;
 import com.smb.checkreport.utility.Util;
+import com.smb.checkreport.utility.Utility;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +29,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.nio.file.Path;
@@ -866,7 +873,7 @@ public class TaskCheckController {
         writer.close();
     }
 
-    @RequestMapping(value = "/download", method = RequestMethod.GET)
+    @RequestMapping(value = "/download_other", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<InputStreamResource> downloadTrello(HttpServletRequest request, Model model, String member){
 
@@ -905,5 +912,149 @@ public class TaskCheckController {
         header.add("Pragma", "no-cache");
         header.add("Expires", "0");
         return ResponseEntity.ok().headers(header).contentType(MediaType.APPLICATION_OCTET_STREAM).body(resource);
+    }
+
+    @RequestMapping(value = "/download", method = RequestMethod.GET)
+    @ResponseBody
+    public void write(HttpServletRequest request, HttpServletResponse response, Model model, String member) throws UnsupportedEncodingException {
+
+        logger.info(">>> [" + request.getSession().getId() + "] Success get the member name: " + member);
+
+        ApiReturn ar = new ApiReturn();
+        String data = "";
+
+        // ------------------------------------------------
+        List<TrelloLists> listTrelloLists = (List<TrelloLists>) request.getSession().getAttribute("listTrelloLists");
+        Map<String, String> membersMap = (Map<String, String>) request.getSession().getAttribute("membersMap");
+
+        XSSFWorkbook wb = new XSSFWorkbook();
+
+        XSSFCellStyle listTitleStyle = Utility.createCellStyle(wb,(short)12,true,true, false, "PINK");
+        XSSFCellStyle colNameStyle = Utility.createCellStyle(wb,(short)12,true,true, false, "YELLOW");
+        XSSFCellStyle taskCenterStyle = Utility.createCellStyle(wb,(short)12,true,false, false, null);
+        XSSFCellStyle taskDescStyle = Utility.createCellStyle(wb,(short)12,false,false, true, null);
+
+        // 設定儲存格資料
+        Sheet sheet = wb.createSheet("NEW");
+
+        int rowIndex = 0;
+        for(TrelloLists tl : listTrelloLists){
+            logger.info("開始展開分類清單: " + tl.getName() + ", 卡片總數: " + tl.getCards().size());
+            CellRangeAddress craList = new CellRangeAddress(rowIndex, rowIndex, 0, 5);
+            sheet.addMergedRegion(craList);
+            Row rowList = sheet.createRow(rowIndex++);
+            Cell cellList = rowList.createCell(0);
+            cellList.setCellStyle(listTitleStyle);
+            cellList.setCellValue(tl.getName());
+            Row rowCol = sheet.createRow(rowIndex++);
+            String[] colNames = {"Card","項目","說明","已完成","Due Day","Owner","備註"};
+
+            for(int i = 0 ; i < colNames.length ; i++){
+                Cell cellCol = rowCol.createCell(i);
+                cellCol.setCellStyle(colNameStyle);
+                cellCol.setCellValue(colNames[i]);
+            }
+
+            for(TrelloCards tc : tl.getCards()){
+                String cardName = tc.getName();
+
+                if(tc.getCheckItemsCnt() > 1) {
+                    CellRangeAddress craCard = new CellRangeAddress(rowIndex, rowIndex + tc.getCheckItemsCnt() - 1, 0, 0);
+                    sheet.addMergedRegion(craCard);
+                }
+
+                for(TrelloCheckLists tcl : tc.getCheckLists()){
+                    String checkListName = tcl.getName();
+
+                    if(tcl.getCheckItemsCnt() > 1) {
+                        CellRangeAddress craCheckList = new CellRangeAddress(rowIndex, rowIndex + tcl.getCheckItemsCnt() - 1, 1, 1);
+                        sheet.addMergedRegion(craCheckList);
+                    }
+
+                    for(TrelloCheckItems tci : tcl.getCheckItems()){
+                        String checkItemName = tci.getName();
+                        String status = "";
+                        if(tci.getState().equals("incomplete")){
+                            status = "X";
+                        } else if(tci.getState().equals("complete")){
+                            status = "V";
+                        }
+                        String dueDay = "";
+                        if(tci.getDue() != null && !tci.getDue().equals("null")){
+                            dueDay = tci.getDue().split("T")[0];
+                        }
+                        String owner = membersMap.get(tci.getIdMember());
+                        Row taskRow = sheet.createRow(rowIndex++);
+                        Cell cell1 = taskRow.createCell(0);
+                        cell1.setCellStyle(taskDescStyle);
+                        cell1.setCellValue(cardName);
+                        Cell cell2 = taskRow.createCell(1);
+                        cell2.setCellStyle(taskDescStyle);
+                        cell2.setCellValue(checkListName);
+                        Cell cell3 = taskRow.createCell(2);
+                        cell3.setCellStyle(taskDescStyle);
+                        cell3.setCellValue(checkItemName);
+                        Cell cell4 = taskRow.createCell(3);
+                        cell4.setCellStyle(taskCenterStyle);
+                        cell4.setCellValue(status);
+                        Cell cell5 = taskRow.createCell(4);
+                        cell5.setCellStyle(taskCenterStyle);
+                        cell5.setCellValue(dueDay);
+                        Cell cell6 = taskRow.createCell(5);
+                        cell6.setCellStyle(taskCenterStyle);
+                        cell6.setCellValue(owner);
+                        Cell cell7 = taskRow.createCell(6);
+                        cell7.setCellStyle(taskDescStyle);
+                        cell7.setCellValue("");
+                    }
+                }
+            }
+        }
+
+        for (int i = 0 ; i < 7 ; i++) {
+            sheet.autoSizeColumn(i);
+            if(i == 6){
+                sheet.setColumnWidth(i, sheet.getColumnWidth(i)*3);
+            }
+        }
+
+        String filename = "TrelloExportTest.xlsx";
+        String headerFileName = new String(filename.getBytes(), "ISO8859-1");
+        response.setHeader("Content-Disposition", "attachment; filename="+headerFileName);
+        OutputStream out = null;
+        try{
+            out = new BufferedOutputStream(response.getOutputStream());
+            wb.write(out);
+        }catch (IOException e){
+            System.out.println("excel會出錯誤");
+        }finally {
+            try{
+                out.close();
+                wb.close();
+            } catch (IOException e){
+                System.out.println("excel會出錯誤");
+            }
+        }
+    }
+
+    @RequestMapping(value = "/search")
+    @ResponseBody
+    public ResponseEntity<String> search(HttpServletRequest request, Model model, String member){
+
+        logger.info(">>> [" + request.getSession().getId() + "] Success and go to search");
+
+        ApiReturn ar = new ApiReturn();
+        String data = "";
+        try{
+            trelloExportService.getTrello(request);
+            ar.setRetMessage("Successfully get all trello data");
+            ar.setRetStatus("Success");
+        }catch (Exception e) {
+            logger.debug(">>> [" + request.getSession().getId() + "] " + e.getMessage());
+            e.printStackTrace();
+            ar.setRetMessage(e.getMessage());
+            ar.setRetStatus("Exception");
+        }
+        return new ResponseEntity<String>(JSON.toJSONString(ar), HttpStatus.OK);
     }
 }

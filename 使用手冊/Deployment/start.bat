@@ -1,0 +1,1 @@
+java -Dfile.encoding=utf-8 -jar SmartBOSS-CheckReportWeb.jar --spring.config.name=trello,log4j2 --spring.config.location=./
