@@ -921,7 +921,6 @@ public class TaskCheckController {
         logger.info(">>> [" + request.getSession().getId() + "] Success get the member name: " + member);
 
         ApiReturn ar = new ApiReturn();
-        String data = "";
 
         // ------------------------------------------------
         List<TrelloLists> listTrelloLists = (List<TrelloLists>) request.getSession().getAttribute("listTrelloLists");
@@ -1018,7 +1017,11 @@ public class TaskCheckController {
             }
         }
 
-        String filename = "TrelloExportTest.xlsx";
+        SimpleDateFormat fileNameSDF = new SimpleDateFormat("MMdd");
+        SimpleDateFormat year = new SimpleDateFormat("yyyy");
+        Date today = new Date();
+
+        String filename = year.format(today).toString() + "專案進度追蹤" + fileNameSDF.format(today).toString() + ".xlsx";
         String headerFileName = new String(filename.getBytes(), "ISO8859-1");
         response.setHeader("Content-Disposition", "attachment; filename="+headerFileName);
         OutputStream out = null;

@@ -349,9 +349,10 @@
                 beforeSend: function (){
                     Swal.fire({
                         title: "取得 Trello 資料中，請稍後",
-                        html: "<img src=/assets/tempImg/loading.gif width: 200px height=200px>",
+                        html: "<img style='width: 200px;height: 200px' src='/assets/tempImg/loading.gif'>",
                         showConfirmButton: false,
                         allowOutsideClick: false,
+                        // showLoading: true
                     });
                 },
                 dataType: 'json',
