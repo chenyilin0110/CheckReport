@@ -5,16 +5,24 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.smb.checkreport.service.CheckReportService;
+import com.smb.checkreport.service.TrelloExportService;
+import com.smb.checkreport.utility.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import javax.servlet.http.HttpServletRequest;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -22,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 @Controller
 @RequestMapping("/task")
@@ -32,9 +41,12 @@ public class TaskCheckController {
     @Autowired
     private CheckReportService checkReportService;
 
+    @Autowired
+    private TrelloExportService trelloExportService;
+
     int failedCount = 0;
     boolean next_is_null_or_not = false;
-    String[] ignore_element_code={"S1","S2","A01","A02","A03","A04","B01","01","T1","T01","T5","T7","T80","T81"};
+    String[] ignore_element_code={"S1","S2","A01","A02","A03","A04","B01","B02","01","T1","T01","T5","T7","T80","T81"};
 
     @RequestMapping(value = "/manager/checkReport")
     @ResponseBody
@@ -852,5 +864,46 @@ public class TaskCheckController {
         writer.write("工件:" + element_code + "報工到訂單:" + otherOrder + temp);
         writer.flush();
         writer.close();
+    }
+
+    @RequestMapping(value = "/download", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> downloadTrello(HttpServletRequest request, Model model, String member){
+
+        logger.info(">>> [" + request.getSession().getId() + "] Success get the member name: " + member);
+
+        ApiReturn ar = new ApiReturn();
+        String data = "";
+        try{
+            if(member.equals("PM")){
+                data = trelloExportService.all(request);
+            } else{
+                data = trelloExportService.eachMember(member, request);
+            }
+        }catch (Exception e) {
+            logger.debug(">>> [" + request.getSession().getId() + "] " + e.getMessage());
+            e.printStackTrace();
+            ar.setRetMessage(e.getMessage());
+            ar.setRetStatus("Exception");
+        }
+
+        // prepare write to csv
+        final byte[] bom = new byte[] { (byte) 239, (byte) 187, (byte) 191 };
+        SimpleDateFormat fileNameSDF = new SimpleDateFormat("MMdd");
+        SimpleDateFormat year = new SimpleDateFormat("yyyy");
+        Date today = new Date();
+
+        InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(Util.concat(bom, data.getBytes())));
+
+        HttpHeaders header = new HttpHeaders();
+        if(member.equals("PM")){
+            header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + Util.getChinesePDFCode(year.format(today).toString() + "專案進度追蹤" + fileNameSDF.format(today).toString()) + ".csv");
+        } else{
+            header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + Util.getChinesePDFCode(member + ".csv"));
+        }
+        header.add("Cache-Control", "no-cache, no-store, must-revalidate");
+        header.add("Pragma", "no-cache");
+        header.add("Expires", "0");
+        return ResponseEntity.ok().headers(header).contentType(MediaType.APPLICATION_OCTET_STREAM).body(resource);
     }
 }

@@ -15,13 +15,22 @@ public class LoginController {
 
     @RequestMapping("/")
     public String onluUrl(HttpServletRequest request, Model model) {
-        return "redirect:/manager";
+        return "login";
     }
 
-    // manager web
+    // check report web
     @RequestMapping("/manager")
     public String manager(HttpServletRequest request, Model model) {
-        logger.info(">>> [" + request.getSession().getId() + "] "  + " - Login successful, start to redirect");
+        logger.info(">>> [" + request.getSession().getId() + "] "  + " - Login successful, start to check report");
         return "opAdmin";
     }
+
+    // trello export web
+    @RequestMapping("/trello")
+    public String trelloExport(HttpServletRequest request, Model model) {
+        logger.info(">>> [" + request.getSession().getId() + "] "  + " - Login successful, start to trello export");
+        return "trelloExport";
+    }
+
+
 }
