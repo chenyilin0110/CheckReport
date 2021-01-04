@@ -2,6 +2,7 @@ package com.smb.checkreport.utility;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFCreationHelper;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -20,7 +21,7 @@ public class Utility {
         return all;
     }
 
-    public static XSSFCellStyle createCellStyle(XSSFWorkbook workbook, short fontsize, boolean horizontal, boolean bold, boolean wrap, String color) {
+    public static XSSFCellStyle createCellStyle(XSSFWorkbook workbook, short fontsize, boolean horizontal, boolean bold, boolean wrap, String color, boolean date, CreationHelper creationHelper) {
         // TODO Auto-generated method stub
         XSSFCellStyle style = workbook.createCellStyle();
         //是否水平居中
@@ -56,6 +57,9 @@ public class Utility {
         style.setBorderRight(BorderStyle.THICK);
         style.setBorderTop(BorderStyle.THICK);
 
+        if(date){
+            style.setDataFormat(creationHelper.createDataFormat().getFormat("yyyy-mm-dd"));
+        }
         return style;
     }
 }

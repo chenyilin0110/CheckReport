@@ -14,6 +14,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFCreationHelper;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -927,11 +928,14 @@ public class TaskCheckController {
         Map<String, String> membersMap = (Map<String, String>) request.getSession().getAttribute("membersMap");
 
         XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFCreationHelper creationHelper = wb.getCreationHelper();
 
-        XSSFCellStyle listTitleStyle = Utility.createCellStyle(wb,(short)12,true,true, false, "PINK");
-        XSSFCellStyle colNameStyle = Utility.createCellStyle(wb,(short)12,true,true, false, "YELLOW");
-        XSSFCellStyle taskCenterStyle = Utility.createCellStyle(wb,(short)12,true,false, false, null);
-        XSSFCellStyle taskDescStyle = Utility.createCellStyle(wb,(short)12,false,false, true, null);
+        XSSFCellStyle listTitleStyle = Utility.createCellStyle(wb,(short)12,true,true, false, "PINK", false, null);
+        XSSFCellStyle colNameStyle = Utility.createCellStyle(wb,(short)12,true,true, false, "YELLOW", false, null);
+        XSSFCellStyle taskCenterStyle = Utility.createCellStyle(wb,(short)12,true,false, false, null, false, null);
+        XSSFCellStyle taskDescStyle = Utility.createCellStyle(wb,(short)12,false,false, true, null, false, null);
+        XSSFCellStyle dateStyle = Utility.createCellStyle(wb,(short)12,false,false, true, null, true,creationHelper);
+
 
         // 設定儲存格資料
         Sheet sheet = wb.createSheet("NEW");
@@ -997,7 +1001,7 @@ public class TaskCheckController {
                         cell4.setCellStyle(taskCenterStyle);
                         cell4.setCellValue(status);
                         Cell cell5 = taskRow.createCell(4);
-                        cell5.setCellStyle(taskCenterStyle);
+                        cell5.setCellStyle(dateStyle);
                         cell5.setCellValue(dueDay);
                         Cell cell6 = taskRow.createCell(5);
                         cell6.setCellStyle(taskCenterStyle);
