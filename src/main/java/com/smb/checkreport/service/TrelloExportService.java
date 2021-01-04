@@ -67,6 +67,8 @@ public class TrelloExportService {
                 membersMap.put(tm.getId(), "倫奇");
             } else if(tm.getFullName().contains("曉真")){
                 membersMap.put(tm.getId(), "曉真");
+            } else if(tm.getFullName().contains("俊銘")){
+                membersMap.put(tm.getId(), "俊銘");
             }
         }
 
