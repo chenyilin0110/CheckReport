@@ -21,7 +21,9 @@ public class Utility {
         return all;
     }
 
-    public static XSSFCellStyle createCellStyle(XSSFWorkbook workbook, short fontsize, boolean horizontal, boolean bold, boolean wrap, String color, boolean date, CreationHelper creationHelper) {
+    public static XSSFCellStyle createCellStyle(XSSFWorkbook workbook, short fontsize, boolean horizontal, boolean bold, boolean wrap, String color, boolean date) {
+        XSSFCreationHelper creationHelper = workbook.getCreationHelper();
+
         // TODO Auto-generated method stub
         XSSFCellStyle style = workbook.createCellStyle();
         //是否水平居中

@@ -928,13 +928,12 @@ public class TaskCheckController {
         Map<String, String> membersMap = (Map<String, String>) request.getSession().getAttribute("membersMap");
 
         XSSFWorkbook wb = new XSSFWorkbook();
-        XSSFCreationHelper creationHelper = wb.getCreationHelper();
 
-        XSSFCellStyle listTitleStyle = Utility.createCellStyle(wb,(short)12,true,true, false, "PINK", false, null);
-        XSSFCellStyle colNameStyle = Utility.createCellStyle(wb,(short)12,true,true, false, "YELLOW", false, null);
-        XSSFCellStyle taskCenterStyle = Utility.createCellStyle(wb,(short)12,true,false, false, null, false, null);
-        XSSFCellStyle taskDescStyle = Utility.createCellStyle(wb,(short)12,false,false, true, null, false, null);
-        XSSFCellStyle dateStyle = Utility.createCellStyle(wb,(short)12,false,false, true, null, true,creationHelper);
+        XSSFCellStyle listTitleStyle = Utility.createCellStyle(wb,(short)12,true,true, false, "PINK", false);
+        XSSFCellStyle colNameStyle = Utility.createCellStyle(wb,(short)12,true,true, false, "YELLOW", false);
+        XSSFCellStyle taskCenterStyle = Utility.createCellStyle(wb,(short)12,true,false, false, null, false);
+        XSSFCellStyle taskDescStyle = Utility.createCellStyle(wb,(short)12,false,false, true, null, false);
+        XSSFCellStyle dateStyle = Utility.createCellStyle(wb,(short)12,true,false, true, null, true);
 
 
         // 設定儲存格資料
@@ -1011,6 +1010,10 @@ public class TaskCheckController {
                         cell7.setCellValue("");
                     }
                 }
+
+                // auto filter
+                CellRangeAddress c = CellRangeAddress.valueOf("D2:F2");
+                sheet.setAutoFilter(c);
             }
         }
 

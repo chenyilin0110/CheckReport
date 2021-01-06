@@ -351,15 +351,14 @@
                         title: "取得 Trello 資料中，請稍後",
                         html: "<img style='width: 300px' src='/assets/tempImg/loading.gif'>",
                         showConfirmButton: false,
-                        allowOutsideClick: false,
-                        // showLoading: true
+                        allowOutsideClick: false
                     });
                 },
                 dataType: 'json',
                 success: function(){
                     Swal.fire({
                         title: "Success",
-                        html: "<span>本頁面將在三秒後自動返回</span>",
+                        html: "<span>本頁面將在三秒後開始下載</span>",
                         timer: 3000,
                         timerProgressBar: true,
                         showConfirmButton: false,
@@ -368,6 +367,7 @@
                     }).then(function (dismiss) {
                         $('#search-task-btn').attr('disabled', true);
                         $('#download-task-btn').attr('disabled', false);
+                        download(document.getElementById("member").value);
                     });
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
