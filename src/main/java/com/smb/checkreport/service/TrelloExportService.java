@@ -42,6 +42,10 @@ public class TrelloExportService {
         String returnStr = new String();
         Properties prop = ConfigLoader.loadConfig("trello.properties");
 
+        // 人員名稱對應
+        String[] showUserName = prop.getProperty("excel.showUserName").split(",");
+        String[] trelloName = prop.getProperty("trello.fullName").split(",");;
+
         //權限相關
         String trelloKey = prop.getProperty("trello.key");
         String trelloToken = prop.getProperty("trello.token");
@@ -55,20 +59,10 @@ public class TrelloExportService {
         returnStr = WebAPI.sendAPI_trello("boards/"+boardID+"/members"+urlParam);
         List<TrelloMembers> listTrelloMembers = JSONArray.parseArray(returnStr, TrelloMembers.class);
         for(TrelloMembers tm : listTrelloMembers){
-            if(tm.getFullName().toUpperCase().contains("JASON")){
-                membersMap.put(tm.getId(), "Jason");
-            } else if(tm.getFullName().toUpperCase().contains("YILIN")){
-                membersMap.put(tm.getId(), "羿霖");
-            } else if(tm.getFullName().toUpperCase().contains("YOUNG")){
-                membersMap.put(tm.getId(), "孟揚");
-            } else if(tm.getFullName().toUpperCase().contains("XERIOU")){
-                membersMap.put(tm.getId(), "喜仙");
-            } else if(tm.getFullName().toUpperCase().contains("LUNCHI")){
-                membersMap.put(tm.getId(), "倫奇");
-            } else if(tm.getFullName().contains("曉真")){
-                membersMap.put(tm.getId(), "曉真");
-            } else if(tm.getFullName().contains("俊銘")){
-                membersMap.put(tm.getId(), "俊銘");
+            for(int eachTrelloName = 0; eachTrelloName < trelloName.length; eachTrelloName++){
+                if(tm.getFullName().toUpperCase().contains(trelloName[eachTrelloName])){
+                    membersMap.put(tm.getId(), showUserName[eachTrelloName]);
+                }
             }
         }
 

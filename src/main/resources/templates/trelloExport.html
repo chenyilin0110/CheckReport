@@ -184,7 +184,7 @@
     .table-containter button {
         font-family: Microsoft JhengHei;
         font-size: 24px;
-        width: 190px;
+        width: 250px;
         height: 70px;
         border-radius: 20px;
         border: none;
@@ -253,8 +253,18 @@
                     </button>
                     <button class="bottom-button-container" id="download-task-btn">
                         <i class="fas fa-download"></i>
-                        <span>&nbsp;下載Trello</span>
+                        <span>&nbsp;下載所有資料</span>
                     </button>
+                    <button class="bottom-button-container" id="download-today-task-btn">
+                        <i class="fas fa-download"></i>
+                        <span>&nbsp;下載日期區間資料</span>
+                    </button>
+                </div>
+                <div class="calender-container">
+                    <label>請選擇下載日期</label>
+                    <input type="text" id="startTime" placeholder="From">
+                    <label>:</label>
+                    <input type="text" id="endTime" placeholder="To">
                 </div>
             </div>
         </div>
@@ -271,43 +281,28 @@
         var memorySelect;
         $(document).ready(function() {
             $('#download-task-btn').attr('disabled', true);
-            // $('#order').on('keyup', function(){
-            //     if( ($('#order').val().length > 0) && ($('#number').val().length > 0) ){
-            //         $('#search-task-btn').attr('disabled', false);
-            //     } else {
-            //         $('#search-task-btn').attr('disabled', true);
-            //     }
-            // });
-            //
-            // $('#number').on('keyup', function(){
-            //     if( ($('#order').val().length > 0) && ($('#number').val().length > 0) ){
-            //         $('#search-task-btn').attr('disabled', false);
-            //     } else {
-            //         $('#search-task-btn').attr('disabled', true);
-            //     }
-            // });
-            //
-            // // get today date
-            // $("#startTime").datepicker().datepicker("setDate", new Date());
-            // $("#endTime").datepicker().datepicker("setDate", new Date());
-            //
-            // // get start time and formate input calender
-            // var day = moment($(".calender-container").find("#startTime").val()).add(0, 'days');
-            // $(".calender-container").find("#startTime").val(day.format('YYYY-MM-DD'));
-            // $(".calender-container").find("#endTime").val(day.format('YYYY-MM-DD'));
-            //
-            //
-            // // if user pick the calender
-            // $(".calender-container").find("#startTime").change(function(){
-            //     var day = moment($(".calender-container").find("#startTime").val()).add(0, 'days');
-            //     $(".calender-container").find("#startTime").val(day.format('YYYY-MM-DD'));
-            //     $(".calender-container").find("#endTime").val(day.format('YYYY-MM-DD'));
-            // });
-            //
-            // $(".calender-container").find("#endTime").change(function(){
-            //     var day = moment($(".calender-container").find("#endTime").val()).add(0, 'days');
-            //     $(".calender-container").find("#endTime").val(day.format('YYYY-MM-DD'));
-            // });
+            $('#download-today-task-btn').attr('disabled', true);
+
+            // get today date
+            $("#startTime").datepicker().datepicker("setDate", new Date());
+            $("#endTime").datepicker().datepicker("setDate", new Date());
+
+            // get start time and formate input calender
+            var day = moment($(".calender-container").find("#startTime").val()).add(0, 'days');
+            $(".calender-container").find("#startTime").val(day.format('YYYY-MM-DD'));
+            $(".calender-container").find("#endTime").val(day.format('YYYY-MM-DD'));
+
+            // if user pick the calender
+            $(".calender-container").find("#startTime").change(function(){
+                var day = moment($(".calender-container").find("#startTime").val()).add(0, 'days');
+                $(".calender-container").find("#startTime").val(day.format('YYYY-MM-DD'));
+                $(".calender-container").find("#endTime").val(day.format('YYYY-MM-DD'));
+            });
+
+            $(".calender-container").find("#endTime").change(function(){
+                var day = moment($(".calender-container").find("#endTime").val()).add(0, 'days');
+                $(".calender-container").find("#endTime").val(day.format('YYYY-MM-DD'));
+            });
 
         } );
 
@@ -323,6 +318,16 @@
         //     }
         // }
 
+        $('#download-today-task-btn').on('click', function(){
+            downloadByCalendar(document.getElementById("startTime").value, document.getElementById("endTime").value);
+        });
+
+        function downloadByCalendar(start, end){
+            var urlParts = location.href.toString().split("/");
+            var target = location.href.toString().replace(urlParts[urlParts.length-1], "task");
+            window.location = target + '/downloadByCalendar?start=' + start + '&end=' + end;
+        }
+
         $('#download-task-btn').on('click', function(){
             download(document.getElementById("member").value);
         });
@@ -332,6 +337,8 @@
             var target = location.href.toString().replace(urlParts[urlParts.length-1], "task");
             window.location = target + '/download?member=' + member;
         }
+
+
 
         $('#search-task-btn').on('click', function(){
             memorySelect = document.getElementById("member").value;
@@ -358,7 +365,7 @@
                 success: function(){
                     Swal.fire({
                         title: "Success",
-                        html: "<span>本頁面將在三秒後開始下載</span>",
+                        html: "<span>本頁面將在三秒後自動返回</span>",
                         timer: 3000,
                         timerProgressBar: true,
                         showConfirmButton: false,
@@ -367,7 +374,8 @@
                     }).then(function (dismiss) {
                         $('#search-task-btn').attr('disabled', true);
                         $('#download-task-btn').attr('disabled', false);
-                        download(document.getElementById("member").value);
+                        $('#download-today-task-btn').attr('disabled', false);
+                        // download(document.getElementById("member").value);
                     });
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
