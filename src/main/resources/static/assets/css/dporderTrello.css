@@ -7,8 +7,8 @@ b, u, i, center,
 dl, dt, dd, ol, ul, li,
 fieldset, form, label, legend,
 table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
 menu, nav, output, ruby, section, summary,
 time, mark, audio, video {
     margin: 0;
@@ -18,7 +18,7 @@ time, mark, audio, video {
     font: inherit;
     vertical-align: baseline;
 }
-article, aside, details, figcaption, figure, 
+article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
     display: block;
 }
@@ -57,6 +57,7 @@ body {
     color: #ffffff;
     display: flex;
     justify-content: space-between;
+    margin-bottom: 30px;
 }
 
 .top-bar-container .top-bar-identity {
@@ -65,7 +66,7 @@ body {
     line-height: 75px;
     width: 100px;
     white-space: nowrap;
-} 
+}
 
 .top-bar-container .top-bar-status {
     font-size: 40px;
@@ -84,7 +85,7 @@ body {
     /* line-height: 75px; */
     display: flex;
     align-items: center;
-    float: right;        
+    float: right;
 }
 
 .logout-form button {
@@ -94,8 +95,8 @@ body {
     border: none;
     font-weight: bold;
     outline: none;
-    /* height: 43px;
-    width: 100px; */
+    height: 43px;
+    width: 100px;
     background-color: #EBEBEB;
     text-align: center;
     white-space: nowrap;
@@ -106,171 +107,106 @@ body {
     /* padding-bottom: 30px; */
 }
 
-.input-title {
-    text-align: center;
-    line-height: 60px;
-    padding-bottom: 10px;
-    font-size: 30px;
-    font-weight: bold;
+.table-containter {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
 }
 
-.table-filter-containter {
-    display: block;
-    margin: 0 auto;
-    text-align: center;
-}
-
-.table-filter-containter input {
+.table-containter input {
     border: 2px solid #000000;
     border-radius: 6px;
-    width: 288px;
+    width: 300px;
     height: 50px;
     padding: 10px 6px;
     font-family: Microsoft JhengHei;
     font-size: 24px;
-    margin: 0 auto;   
     outline:none;
 }
 
-.table-filter-containter input:focus {
-    /* border: 2px solid #555555; */
-    /* border-radius: 6px; */
-    /* width: 300px; */
+.table-containter input:focus {
     background-color: rgb(255, 242, 242);
 }
 
-.table-filter-containter button {
-    margin-left: 4px;
+.table-containter select{
+    border: 2px solid #000000;
     background-color: #1C1F4C;
-    color: #ffffff;
-    font-family: Microsoft JhengHei;
-    font-size: 24px;
-    line-height: 24px;
-    height: 50px;
+    color: white;
     border-radius: 6px;
-    border: none;
+    text-align: center;
+    height: 70px;
+    width: 130px;
     outline: none;
+    font-size: 24px;
+    margin: 15px 15px;
+}
+select::-ms-expand{
+    display: none;
 }
 
-.table-filter-containter button:hover {
-    background-color: rgba(28, 31, 76, 0.8);
-    /* outline:none; */
+.table-containter select:focus{
+    box-shadow: #467BF4;
 }
 
-.table-filter-containter button:active {
-    background-color: rgba(28, 31, 76, 0.6);
-}
-
-.dispatch-order-container {
-    padding-bottom: 40px;
-    font-size: 14px;
-    padding-left: 20px;
-    padding-right: 20px;
-}
-
-.bottom-button-container {
+.calender-container{
     display: flex;
-    justify-content:center;
-    margin-bottom: 20px;
+    justify-content: center;
+    font-size: 24px;
+    margin-top: 30px;
+    margin-bottom: 30px;
 }
 
-.bottom-button-container button {
+.calender-container label{
+    display: block;
+    text-align: center;
+    margin: auto 15px;
+}
+
+.calender-container input{
+    display: block;
+    width: 200px;
+    font-size: 24px;
+}
+
+.table-containter button {
     font-family: Microsoft JhengHei;
     font-size: 24px;
-    width: 190px;
-    height: 130px;
+    width: 250px;
+    height: 70px;
     border-radius: 20px;
     border: none;
     background-color: #1C1F4C;
     color: #ffffff;
-    margin: 0 15px;
+    margin: 15px 15px;
     outline:none;
 }
 
-.bottom-button-container button:hover {
+.table-containter button:hover {
     background-color: rgba(28, 31, 76, 0.8);
     /* outline:none; */
 }
 
-.bottom-button-container button:active {
+.table-containter button:active {
     background-color: rgba(28, 31, 76, 0.6);
     /* outline:none; */
 }
 
-.bottom-button-container button:disabled {
+.table-containter button:disabled {
     background-color: rgba(141, 148, 154, 0.6);
 }
 
-.op-btn i {
-    font-size: 40px;
-}
-
-.op-btn span{
-    font-size: 40px;
-    margin-left: 4px;
-}
-
-.task-content.select-checkbox::before{
-    width: 20px !important;
-    height: 20px !important;
-    border: 2px solid #595D6E !important;
-    margin-top: -8px !important;
-}
-
-.dataTables_empty {
-    font-size: 20px !important;
-}
 
 .selected td {
     background-color: #AAAAAA !important;
 }
 
-.smb-confirm-button-class {
-    font-family: Microsoft JhengHei;
-    font-size: 24px;
-    font-weight: bold;
-    color: #ffffff;
-    border-radius: 6px;
-    border: none;
-    outline: none;
-    width: 90px;
-    height: 50px;
-    line-height: 50px;
-    background-color: #3085D6;
-    margin: auto 3px;
+.calender-container label{
+    display: block;
+    text-align: center;
+    margin: auto 15px;
 }
 
-.smb-confirm-button-class:hover {
-    background-color: #2B77C0;
-}
-
-.smb-confirm-button-class:active {
-    background-color: #266AAB;
-}
-
-.smb-cancel-button-class {
-    font-family: Microsoft JhengHei;
-    font-size: 24px;
-    font-weight: bold;
-    color: #ffffff;
-    border-radius: 6px;
-    border: none;
-    outline: none;
-    width: 90px;
-    height: 50px;
-    line-height: 50px;
-    background-color: #AAAAAA;
-    margin: auto 3px;
-}
-
-.smb-cancel-button-class:hover {
-    background-color: #999999;
-}
-
-.smb-cancel-button-class:active {
-    background-color: #888888;
-}
-
-.swal2-title, .swal2-content {
-    font-family: Verdana !important;
+.calender-container input{
+    display: block;
+    width: 160px;
 }

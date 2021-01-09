@@ -100,9 +100,26 @@ body {
     white-space: nowrap;
 }
 
-.task-info-container {
-    padding-top: 80px;
+.tag-container {
+    text-align: center;
+    background-color: #F0AD4E;
+    width: 180px;
+    height: 40px;
+    border-radius: 5px;
+    margin: 6px auto;
+    margin-top: 30px;
 }
+
+.tag-container span {
+    font-size: 26px;
+    color: white;
+    line-height: 40px;
+    font-weight: bold;
+}
+
+/* .task-info-container {
+    padding-top: 30px;
+} */
 
 .task-info-material {
     display: flex;
