@@ -210,3 +210,35 @@ select::-ms-expand{
     display: block;
     width: 160px;
 }
+.bottom-button-container {
+    display: flex;
+    justify-content:center;
+    margin-bottom: 20px;
+}
+
+.bottom-button-container button {
+    font-family: Microsoft JhengHei;
+    font-size: 24px;
+    width: 190px;
+    height: 100px;
+    border-radius: 20px;
+    border: none;
+    background-color: #1C1F4C;
+    color: #ffffff;
+    margin: 15px 15px;
+    outline:none;
+}
+
+.bottom-button-container button:hover {
+    background-color: rgba(28, 31, 76, 0.8);
+    /* outline:none; */
+}
+
+.bottom-button-container button:active {
+    background-color: rgba(28, 31, 76, 0.6);
+    /* outline:none; */
+}
+
+.bottom-button-container button:disabled {
+    background-color: rgba(141, 148, 154, 0.6);
+}

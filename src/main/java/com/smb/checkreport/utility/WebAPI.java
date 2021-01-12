@@ -60,20 +60,20 @@ public class WebAPI {
         }
     }
 
-    public static String sendAPI_json(String method, String content) {
+    public static String sendAPI_trello_put(String method) {
         String url = "";
         try {
             url = getURL();
 
             URL restUrl = new URL(url + method);
             HttpURLConnection conn = (HttpURLConnection) restUrl.openConnection();
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod("PUT");
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setDoOutput(true);
 
-            PrintStream ps = new PrintStream(conn.getOutputStream());
-            ps.print(content);
-            ps.close();
+//            PrintStream ps = new PrintStream(conn.getOutputStream());
+//            ps.print(content);
+//            ps.close();
 
             // 送出的動作
             BufferedReader br = new BufferedReader((new InputStreamReader(conn.getInputStream())));

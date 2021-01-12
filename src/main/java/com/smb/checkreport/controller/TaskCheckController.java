@@ -7,8 +7,10 @@ import com.alibaba.fastjson.JSONArray;
 import com.smb.checkreport.mapper.GetTrelloDataMapper;
 import com.smb.checkreport.service.CheckReportService;
 import com.smb.checkreport.service.TrelloExportService;
+import com.smb.checkreport.utility.ConfigLoader;
 import com.smb.checkreport.utility.Util;
 import com.smb.checkreport.utility.Utility;
+import com.smb.checkreport.utility.WebAPI;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -875,46 +877,46 @@ public class TaskCheckController {
         writer.close();
     }
 
-    @RequestMapping(value = "/download_other", method = RequestMethod.GET)
-    @ResponseBody
-    public ResponseEntity<InputStreamResource> downloadTrello(HttpServletRequest request, Model model, String member){
-
-        logger.info(">>> [" + request.getSession().getId() + "] Success get the member name: " + member);
-
-        ApiReturn ar = new ApiReturn();
-        String data = "";
-        try{
-            if(member.equals("PM")){
-                data = trelloExportService.all(request);
-            } else{
-                data = trelloExportService.eachMember(member, request);
-            }
-        }catch (Exception e) {
-            logger.debug(">>> [" + request.getSession().getId() + "] " + e.getMessage());
-            e.printStackTrace();
-            ar.setRetMessage(e.getMessage());
-            ar.setRetStatus("Exception");
-        }
-
-        // prepare write to csv
-        final byte[] bom = new byte[] { (byte) 239, (byte) 187, (byte) 191 };
-        SimpleDateFormat fileNameSDF = new SimpleDateFormat("MMdd");
-        SimpleDateFormat year = new SimpleDateFormat("yyyy");
-        Date today = new Date();
-
-        InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(Util.concat(bom, data.getBytes())));
-
-        HttpHeaders header = new HttpHeaders();
-        if(member.equals("PM")){
-            header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + Util.getChinesePDFCode(year.format(today).toString() + "專案進度追蹤" + fileNameSDF.format(today).toString()) + ".csv");
-        } else{
-            header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + Util.getChinesePDFCode(member + ".csv"));
-        }
-        header.add("Cache-Control", "no-cache, no-store, must-revalidate");
-        header.add("Pragma", "no-cache");
-        header.add("Expires", "0");
-        return ResponseEntity.ok().headers(header).contentType(MediaType.APPLICATION_OCTET_STREAM).body(resource);
-    }
+//    @RequestMapping(value = "/download_other", method = RequestMethod.GET)
+//    @ResponseBody
+//    public ResponseEntity<InputStreamResource> downloadTrello(HttpServletRequest request, Model model, String member){
+//
+//        logger.info(">>> [" + request.getSession().getId() + "] Success get the member name: " + member);
+//
+//        ApiReturn ar = new ApiReturn();
+//        String data = "";
+//        try{
+//            if(member.equals("PM")){
+//                data = trelloExportService.all(request);
+//            } else{
+//                data = trelloExportService.eachMember(member, request);
+//            }
+//        }catch (Exception e) {
+//            logger.debug(">>> [" + request.getSession().getId() + "] " + e.getMessage());
+//            e.printStackTrace();
+//            ar.setRetMessage(e.getMessage());
+//            ar.setRetStatus("Exception");
+//        }
+//
+//        // prepare write to csv
+//        final byte[] bom = new byte[] { (byte) 239, (byte) 187, (byte) 191 };
+//        SimpleDateFormat fileNameSDF = new SimpleDateFormat("MMdd");
+//        SimpleDateFormat year = new SimpleDateFormat("yyyy");
+//        Date today = new Date();
+//
+//        InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(Util.concat(bom, data.getBytes())));
+//
+//        HttpHeaders header = new HttpHeaders();
+//        if(member.equals("PM")){
+//            header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + Util.getChinesePDFCode(year.format(today).toString() + "專案進度追蹤" + fileNameSDF.format(today).toString()) + ".csv");
+//        } else{
+//            header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + Util.getChinesePDFCode(member + ".csv"));
+//        }
+//        header.add("Cache-Control", "no-cache, no-store, must-revalidate");
+//        header.add("Pragma", "no-cache");
+//        header.add("Expires", "0");
+//        return ResponseEntity.ok().headers(header).contentType(MediaType.APPLICATION_OCTET_STREAM).body(resource);
+//    }
 
     @RequestMapping(value = "/downloadByCalendar", method = RequestMethod.GET)
     @ResponseBody
@@ -1214,20 +1216,67 @@ public class TaskCheckController {
         }
     }
 
-    @RequestMapping(value = "/search")
+//    @RequestMapping(value = "/search")
+//    @ResponseBody
+//    public ResponseEntity<String> search(HttpServletRequest request, Model model, String member){
+//
+//        logger.info(">>> [" + request.getSession().getId() + "] Success and go to search");
+//
+//        ApiReturn ar = new ApiReturn();
+//        String data = "";
+//        try{
+//            trelloExportService.getTrello(request);
+//            ar.setRetMessage("Successfully get all trello data");
+//            ar.setRetStatus("Success");
+//        }catch (Exception e) {
+//            logger.debug(">>> [" + request.getSession().getId() + "] " + e.getMessage());
+//            e.printStackTrace();
+//            ar.setRetMessage(e.getMessage());
+//            ar.setRetStatus("Exception");
+//        }
+//        return new ResponseEntity<String>(JSON.toJSONString(ar), HttpStatus.OK);
+//    }
+
+    @RequestMapping(value = "/searchDT")
     @ResponseBody
-    public ResponseEntity<String> search(HttpServletRequest request, Model model, String member){
+    public JSONObject searchDT(HttpServletRequest request, Model model, String member) throws IOException, ParseException {
 
         logger.info(">>> [" + request.getSession().getId() + "] Success and go to search");
 
+        JSONObject returnJson = new JSONObject();
+        List<ExportToCSV> data = trelloExportService.getTrelloDT(request, returnJson, 0, null, null);
+
+        returnJson.put("data", data);
+        return returnJson;
+    }
+
+    @RequestMapping(value = "/updateComplete")
+    @ResponseBody
+    public ResponseEntity<String> updateComplete(HttpServletRequest request, Model model, String cardId, String checkItemsId, String status){
+        if(status.equals("in")){
+            // incomplete
+            logger.info(">>> [" + request.getSession().getId() + "] update the checkItemsId: " + checkItemsId + "from complete to incomplete");
+        } else{
+            logger.info(">>> [" + request.getSession().getId() + "] update the checkItemsId: " + checkItemsId + "from incomplete to complete");
+        }
+
         ApiReturn ar = new ApiReturn();
-        String data = "";
+
+        String returnStr = new String();
+        Properties prop = ConfigLoader.loadConfig("trello.properties");
+
+        //權限相關
+        String trelloKey = prop.getProperty("trello.key");
+        String trelloToken = prop.getProperty("trello.token");
+        String urlParam = "&key=" + trelloKey + "&token=" + trelloToken;
+
+
         try{
-            trelloExportService.getTrello(request);
-            ar.setRetMessage("Successfully get all trello data");
+            returnStr = WebAPI.sendAPI_trello_put("cards/"+cardId+"/checkItem/"+checkItemsId+"?state=" + status + urlParam);
+            List<ExportToCSV> data = trelloExportService.getTrelloDT(request, null, 1, checkItemsId, status);
+            ar.setRetMessage("");
             ar.setRetStatus("Success");
-        }catch (Exception e) {
-            logger.debug(">>> [" + request.getSession().getId() + "] " + e.getMessage());
+        } catch (Exception e){
             e.printStackTrace();
             ar.setRetMessage(e.getMessage());
             ar.setRetStatus("Exception");
